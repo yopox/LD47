@@ -7,28 +7,38 @@ import com.yopox.ld47.screens.Screen
 import kotlin.math.*
 
 open class Orbital(texture: Texture) : Sprite(texture) {
-    private var angle = 90f
+    private var angle = PI / 4
     private var radius = CENTER
     private var leftOrbit = true
-    private var speed = 2f
-
+    private var speed = 3f
+    private var movement = Movement.CIRCULAR
+    private var linearAngle = 0.0
+    private var forward = true
 
     private var angleDiff = 0f
     var facing = Facing.FRONT
 
     companion object {
+        enum class Movement {
+            CIRCULAR, LINEAR
+        }
+
+        val MIN_CIRCULAR_ANGLE = PI / 4
+
         enum class Facing {
             FRONT, LEFT, RIGHT
         }
-        val ANGLE_LIMIT = 16f
-        val ANGLE_SPEED = 4f
+
+        val ANGLE_LIMIT = 12f
+        val ANGLE_SPEED = 2f
         val LATERAL_SPEED = 3f
 
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
         val RIGHT_FOCAL = Vector2(848f, Screen.HEIGHT / 2)
 
-        val CENTER = (RIGHT_FOCAL.x - LEFT_FOCAL.x) / 2
-        val RADIUS_WIDTH = 100f
+        val RADIUS_MIN = 45f
+        val RADIUS_MAX = 210f
+        val CENTER = 145f
     }
 
     fun update() {
@@ -38,33 +48,54 @@ open class Orbital(texture: Texture) : Sprite(texture) {
             Facing.RIGHT -> faceRight()
         }
 
-        angle += (if (leftOrbit) +1 else -1) * CENTER / radius * speed
-        if (angle >= 360 || angle <= -180) {
-            angle = if (leftOrbit) 180f else 0f
-            leftOrbit = !leftOrbit
-            radius = RIGHT_FOCAL.x - LEFT_FOCAL.x - radius
+        when (movement) {
+            Movement.CIRCULAR -> {
+                // Angle update
+                angle += (if (forward) +1 else -1) * (if (leftOrbit) +1 else -1) * CENTER / radius * speed / 180 * PI
+
+                // Position update
+                val dx = radius * cos(angle).toFloat()
+                val dy = radius * sin(angle).toFloat()
+                val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
+                this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
+
+                // Movement switching condition
+                linearAngle()?.let {
+                    movement = Movement.LINEAR
+                    linearAngle = it
+                }
+            }
+            Movement.LINEAR -> {
+                val dx = (speed * 2 * cos(linearAngle)).toFloat()
+                val dy = (speed * 2 * sin(linearAngle)).toFloat()
+                x += dx
+                y += dy
+
+                val targetFocal = if (leftOrbit) RIGHT_FOCAL else LEFT_FOCAL
+                val focalRadius = targetFocal.dst(orbitalX, orbitalY)
+                if (targetFocal.dst(orbitalX - dx, orbitalY - dy) > focalRadius
+                        && targetFocal.dst(orbitalX + dx, orbitalY + dy) > focalRadius) {
+                    movement = Movement.CIRCULAR
+                    leftOrbit = !leftOrbit
+                    angle = atan2(orbitalY - targetFocal.y, orbitalX - targetFocal.x).toDouble().normalize
+                    radius = focalRadius
+                }
+            }
         }
-        angle %= 360
 
-        val dx = radius * cos(angle / 180 * PI).toFloat()
-        val dy = radius * sin(angle / 180 * PI).toFloat()
-        val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
-
-        this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
-        this.rotation = 90 + angle + angleDiff
+        this.rotation = (if (leftOrbit) -90 else 90) + (angle / PI * 180).toFloat() + angleDiff
     }
 
     fun faceRight() {
         angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
         val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
-        radius = min(CENTER + RADIUS_WIDTH, max(CENTER - RADIUS_WIDTH, radius + radiusDiff))
+        radius = min(RADIUS_MAX, max(RADIUS_MIN, radius + radiusDiff))
     }
 
     fun faceLeft() {
         angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
         val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
-        radius = min(CENTER + RADIUS_WIDTH, max(CENTER - RADIUS_WIDTH, radius - radiusDiff))
-        println("$radius")
+        radius = min(RADIUS_MAX, max(RADIUS_MIN, radius - radiusDiff))
 
     }
 
@@ -73,5 +104,22 @@ open class Orbital(texture: Texture) : Sprite(texture) {
         if (angleDiff > 0) angleDiff = max(angleDiff - ANGLE_SPEED, 0f)
         if (abs(angleDiff) < ANGLE_SPEED) angleDiff = 0f
     }
+
+    private fun linearAngle(): Double? {
+        return when {
+            forward && leftOrbit && angle > 2 * PI - MIN_CIRCULAR_ANGLE -> MIN_CIRCULAR_ANGLE
+            forward && !leftOrbit && angle < -PI + MIN_CIRCULAR_ANGLE -> PI - MIN_CIRCULAR_ANGLE
+            else -> null
+        }
+    }
+
+    private val Double.normalize: Double
+        get() = (this + 2 * PI) % (2 * PI)
+
+    private val orbitalX: Float
+        get() = x + originX
+
+    private val orbitalY: Float
+        get() = y + originY
 
 }

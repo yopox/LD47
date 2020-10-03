@@ -19,7 +19,7 @@ class LD47 : KtxGame<Screen>() {
 
         Fonts.genFonts()
         with(assetManager) {
-            load("sprites/ship.png", Texture::class.java)
+            load("sprites/car.png", Texture::class.java)
             load("circuit/global.png", Texture::class.java)
             finishLoading()
         }

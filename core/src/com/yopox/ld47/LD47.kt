@@ -1,7 +1,7 @@
 package com.yopox.ld47
 
-import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Screen
+import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.screens.Title
 import ktx.app.KtxGame
 

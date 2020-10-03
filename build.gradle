@@ -1,5 +1,6 @@
 buildscript {
     ext.kotlinVersion = '1.3.41'
+    ext.ktxVersion = '1.9.11-b1'
 
     repositories {
         mavenLocal()
@@ -45,10 +46,9 @@ project(":desktop") {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
-        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
-        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
+        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }
 }
 
@@ -66,10 +66,15 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
-        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
+
+        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }
 }
 
@@ -78,9 +83,13 @@ project(":core") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
-        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
+        api "io.github.libktx:ktx-app:$ktxVersion"
+        api "io.github.libktx:ktx-math:$ktxVersion"
+        api "io.github.libktx:ktx-freetype:$ktxVersion"
+        api "io.github.libktx:ktx-graphics:$ktxVersion"
     }
 }

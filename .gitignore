@@ -1,5 +1,4 @@
 ## Java
-
 *.class
 *.war
 *.ear
@@ -113,3 +112,6 @@ Thumbs.db
 /ios/xcode/native/
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
+
+## Protected assets
+android/assets/fonts/*

@@ -9,6 +9,9 @@ class LD47 : KtxGame<Screen>() {
 
     override fun create() {
         super.create()
+
+        Fonts.genFonts()
+
         addScreen(Title(this))
         setScreen<Title>()
     }

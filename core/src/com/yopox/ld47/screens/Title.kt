@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.LD47
 import com.yopox.ld47.graphics.Button
-import com.yopox.ld47.graphics.Fonts.fontTitle
 import com.yopox.ld47.graphics.Fonts.drawCentered
+import com.yopox.ld47.graphics.Fonts.fontTitle
 import ktx.graphics.use
 
-class Title(game: LD47): Screen(game) {
+class Title(game: LD47) : Screen(game) {
 
     init {
         buttons.add(
@@ -25,7 +25,8 @@ class Title(game: LD47): Screen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
-            fontTitle.drawCentered(batch, "STUCK IN A\nLOOP /////", Vector2(0f, HEIGHT / 3), Vector2(WIDTH, HEIGHT * 2 / 3))
+            fontTitle.drawCentered(batch, "STUCK IN A\nLOOP /////",
+                    Vector2(0f, HEIGHT / 3), Vector2(WIDTH, HEIGHT * 2 / 3))
             buttons.forEach { button -> button.draw(batch) }
         }
 

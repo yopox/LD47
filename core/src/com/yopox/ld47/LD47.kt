@@ -25,7 +25,7 @@ class LD47 : KtxGame<Screen>() {
 
         addScreen(Title(this))
         addScreen(Main(this))
-        setScreen<Main>()
+        setScreen<Title>()
     }
 
 }

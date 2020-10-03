@@ -17,9 +17,6 @@ class Main(game: LD47) : Screen(game) {
     companion object {
         const val RADIUS = 100f
         const val PLAYABLE_HEIGHT = 200f
-
-        val LEFT_PLANET = Vector2(WIDTH / 3, HEIGHT / 2)
-        val RIGHT_PLANET = Vector2(WIDTH * 2 / 3, HEIGHT / 2)
     }
 
     private val player = Player()
@@ -32,19 +29,13 @@ class Main(game: LD47) : Screen(game) {
 
         player.update()
 
-        shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
-            renderer.color = colorLight
-            renderer.circle(LEFT_PLANET.x, LEFT_PLANET.y, RADIUS + PLAYABLE_HEIGHT)
-            renderer.circle(RIGHT_PLANET.x, RIGHT_PLANET.y, RADIUS + PLAYABLE_HEIGHT)
-
-            renderer.color = colorDark
-            renderer.circle(LEFT_PLANET.x, LEFT_PLANET.y, RADIUS)
-            renderer.circle(RIGHT_PLANET.x, RIGHT_PLANET.y, RADIUS)
-        }
-
         batch.use { batch ->
-            buttons.forEach { button -> button.draw(batch) }
+            // Background
+            // Sprites
             player.draw(batch)
+
+            // Buttons
+            buttons.forEach { button -> button.draw(batch) }
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->

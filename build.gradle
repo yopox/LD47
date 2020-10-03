@@ -12,7 +12,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
     }
 }
 
@@ -42,12 +41,14 @@ allprojects {
 project(":desktop") {
     apply plugin: "kotlin"
 
-
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
+        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
     }
 }
 
@@ -66,15 +67,20 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
+        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
     }
 }
 
 project(":core") {
     apply plugin: "kotlin"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+        implementation group: 'io.github.libktx', name: 'ktx-app', version: '1.9.11-b1'
+        implementation group: 'io.github.libktx', name: 'ktx-math', version: '1.9.11-b1'
     }
 }

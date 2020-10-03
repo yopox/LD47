@@ -1,11 +1,13 @@
 package com.yopox.ld47.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.LD47
+import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
 import ktx.graphics.use
 
@@ -31,6 +33,8 @@ class Main(game: LD47) : Screen(game) {
 
         batch.use { batch ->
             // Background
+            batch.draw(LD47.assetManager.get("circuit/global.png", Texture::class.java), 0f, 0f)
+
             // Sprites
             player.draw(batch)
 
@@ -42,4 +46,21 @@ class Main(game: LD47) : Screen(game) {
             buttons.forEach { button -> button.drawBorder(renderer) }
         }
     }
+
+    override fun keyDown(keycode: Int): Boolean {
+        when (keycode) {
+            Input.Keys.LEFT -> player.facing = LEFT
+            Input.Keys.RIGHT -> player.facing = RIGHT
+        }
+        return true
+    }
+
+    override fun keyUp(keycode: Int): Boolean {
+        when (keycode) {
+            Input.Keys.LEFT -> if (player.facing == LEFT) player.facing = FRONT
+            Input.Keys.RIGHT -> if (player.facing == RIGHT) player.facing = FRONT
+        }
+        return true
+    }
+
 }

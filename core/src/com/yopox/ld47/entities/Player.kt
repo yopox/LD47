@@ -4,4 +4,8 @@ import com.yopox.ld47.LD47
 
 class Player : Orbital(LD47.assetManager["sprites/ship.png"]) {
 
+    init {
+        setOriginCenter()
+    }
+
 }

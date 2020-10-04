@@ -31,7 +31,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
 
         val ANGLE_LIMIT = 12f
         val ANGLE_SPEED = 2f
-        val LATERAL_SPEED = 3f
+        val LATERAL_SPEED = 4.5f
 
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
         val RIGHT_FOCAL = Vector2(848f, Screen.HEIGHT / 2)
@@ -87,29 +87,29 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     }
 
     fun faceRight() {
+        angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
         when (movement) {
             Movement.CIRCULAR -> {
-                angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
                 radius = max(RADIUS_MIN, radius + radiusDiff)
             }
             Movement.LINEAR -> {
-                x += speed / 2 * cos(linearAngle - PI / 2).toFloat()
-                y += speed / 2 * sin(linearAngle - PI / 2).toFloat()
+                x += LATERAL_SPEED * cos(linearAngle - PI / 2).toFloat()
+                y += LATERAL_SPEED * sin(linearAngle - PI / 2).toFloat()
             }
         }
     }
 
     fun faceLeft() {
+        angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
         when (movement) {
             Movement.CIRCULAR -> {
-                angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
                 radius = max(RADIUS_MIN, radius - radiusDiff)
             }
             Movement.LINEAR -> {
-                x += speed / 2 * cos(linearAngle + PI / 2).toFloat()
-                y += speed / 2 * sin(linearAngle + PI / 2).toFloat()
+                x += LATERAL_SPEED * cos(linearAngle + PI / 2).toFloat()
+                y += LATERAL_SPEED * sin(linearAngle + PI / 2).toFloat()
             }
         }
 

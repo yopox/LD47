@@ -3,19 +3,21 @@ package com.yopox.ld47.entities
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
+import com.yopox.ld47.Assets
+import com.yopox.ld47.LD47
+import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.*
 
-open class Orbital(texture: Texture) : Sprite(texture) {
-    private var angle = PI / 4
-    private var radius = CENTER
-    private var leftOrbit = true
-    private var speed = 4f
+open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.sprites[textureID], Texture::class.java)) {
+    internal var angle = PI / 4
+    internal var radius = CENTER
+    internal var leftOrbit = true
+    internal var speed = 4f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
-    private var forward = true
+    internal var forward = true
 
-    private var angleDiff = 0f
     var facing = Facing.FRONT
 
     companion object {
@@ -29,8 +31,8 @@ open class Orbital(texture: Texture) : Sprite(texture) {
             FRONT, LEFT, RIGHT
         }
 
-        val ANGLE_LIMIT = 12f
-        val ANGLE_SPEED = 2f
+        val ANGLE_LIMIT = 10f
+        val ANGLE_SPEED = 6f
         val LATERAL_SPEED = 4.5f
 
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
@@ -40,10 +42,8 @@ open class Orbital(texture: Texture) : Sprite(texture) {
         val CENTER = 145f
     }
 
-    fun update() {
-
+    open fun update() {
         when (facing) {
-            Facing.FRONT -> faceFront()
             Facing.LEFT -> faceLeft()
             Facing.RIGHT -> faceRight()
         }
@@ -61,8 +61,13 @@ open class Orbital(texture: Texture) : Sprite(texture) {
 
                 // Movement switching condition
                 linearAngle()?.let {
-                    movement = Movement.LINEAR
-                    linearAngle = it
+                    if (shouldCross()) {
+                        movement = Movement.LINEAR
+                        linearAngle = it
+                        val nextAngle = atan2(Screen.HEIGHT / 2 - orbitalY, Screen.WIDTH / 2 - orbitalX).toDouble() -
+                                linearCorrection()
+                        angle = nextAngle
+                    }
                 }
             }
             Movement.LINEAR -> {
@@ -78,20 +83,38 @@ open class Orbital(texture: Texture) : Sprite(texture) {
                 if (previousRadius > focalRadius && nextRadius > focalRadius) {
                     movement = Movement.CIRCULAR
                     leftOrbit = !leftOrbit
-                    val nextAngle = atan2(orbitalY - targetFocal.y, orbitalX - targetFocal.x).toDouble().normalize
-                    angleDiff += (min((angle - nextAngle - PI).normalize, (PI - angle + nextAngle).normalize) / PI * 180).toFloat()
-                    println("Bump: $angleDiff")
+                    val nextAngle = acos((orbitalX - targetFocal.x) / focalRadius).toDouble().normalize +
+                            if (!forward) if (!leftOrbit) PI / 2 else 3 * PI / 2 else 0.0
                     angle = nextAngle
                     radius = focalRadius
                 }
             }
         }
 
-        this.rotation = (if (leftOrbit) -90 else 90) + (angle / PI * 180).toFloat() + angleDiff
+        // Update rotation
+        val oldRotation = (this.rotation - rotationCorrection() + 360f) % 360
+        val targetAngle = ((angle.normalize / PI * 180).toFloat() +
+                (if (facing == Facing.LEFT) ANGLE_LIMIT else 0f) +
+                (if (facing == Facing.RIGHT) -ANGLE_LIMIT else 0f) + 360f * 2) % 360
+        val diff = abs(oldRotation - targetAngle)
+        val nextRotation = when {
+            abs(oldRotation - targetAngle) < ANGLE_SPEED -> targetAngle
+            oldRotation - targetAngle < 0 -> oldRotation + if (diff < 180) ANGLE_SPEED else -ANGLE_SPEED
+            oldRotation - targetAngle > 0 -> oldRotation - if (diff < 180) ANGLE_SPEED else -ANGLE_SPEED
+            else -> targetAngle
+        }
+        this.rotation = nextRotation + rotationCorrection()
     }
 
+    open fun turn() {}
+
+    open fun shouldCross(): Boolean = true
+
+    internal fun rotationCorrection(): Float = (if (leftOrbit) -90f else 90f) * if (forward) 1 else -1
+
+    internal fun linearCorrection(): Double = (if (leftOrbit) -3 * PI / 2 else 3 * PI / 2) * if (forward) 1 else -1
+
     fun faceRight() {
-        if (angleDiff > -ANGLE_LIMIT) angleDiff -= ANGLE_SPEED
         when (movement) {
             Movement.CIRCULAR -> {
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
@@ -107,7 +130,6 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     }
 
     fun faceLeft() {
-        if (angleDiff < ANGLE_LIMIT) angleDiff += ANGLE_SPEED
         when (movement) {
             Movement.CIRCULAR -> {
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
@@ -123,29 +145,27 @@ open class Orbital(texture: Texture) : Sprite(texture) {
 
     }
 
-    fun faceFront() {
-        if (angleDiff < 0) angleDiff = min(angleDiff + ANGLE_SPEED / 3, 0f)
-        if (angleDiff > 0) angleDiff = max(angleDiff - ANGLE_SPEED / 3, 0f)
-        if (abs(angleDiff) < ANGLE_SPEED / 3) angleDiff = 0f
-    }
-
     private fun linearAngle(): Double? {
         return when {
-            forward && leftOrbit && angle > 2 * PI - MIN_CIRCULAR_ANGLE ->
+            forward && leftOrbit && orbitalY < LEFT_FOCAL.y && angle.normalize > 2 * PI - MIN_CIRCULAR_ANGLE ->
                 (MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2) - PI)).normalize / 2
-            forward && !leftOrbit && angle < -PI + MIN_CIRCULAR_ANGLE ->
+            forward && !leftOrbit && orbitalY < RIGHT_FOCAL.y && angle.normalize < PI + MIN_CIRCULAR_ANGLE ->
                 (PI - MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2) - PI)).normalize / 2
+            !forward && leftOrbit && orbitalY > LEFT_FOCAL.y && angle.normalize < MIN_CIRCULAR_ANGLE ->
+                (2 * PI - MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2))).normalize / 2 - PI / 2
+            !forward && !leftOrbit && orbitalY > RIGHT_FOCAL.y && angle.normalize > PI - MIN_CIRCULAR_ANGLE ->
+                (PI + MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2))).normalize / 2 + PI / 2
             else -> null
         }
     }
 
     private val Double.normalize: Double
-        get() = (this + 2 * PI) % (2 * PI)
+        get() = (this + ceil(abs(this)) * 2 * PI) % (2 * PI)
 
-    private val orbitalX: Float
+    internal val orbitalX: Float
         get() = x + originX
 
-    private val orbitalY: Float
+    internal val orbitalY: Float
         get() = y + originY
 
 }

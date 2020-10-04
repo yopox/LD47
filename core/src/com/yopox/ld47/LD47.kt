@@ -8,11 +8,13 @@ import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.screens.Main
 import com.yopox.ld47.screens.Title
 import ktx.app.KtxGame
+import kotlin.random.Random
 
 class LD47 : KtxGame<Screen>() {
 
     companion object {
         val assetManager = AssetManager()
+        val random = Random(System.currentTimeMillis())
     }
 
     override fun create() {

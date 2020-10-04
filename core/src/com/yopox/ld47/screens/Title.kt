@@ -45,4 +45,11 @@ class Title(game: LD47) : Screen(game) {
 
     override fun reset() {}
 
+    override fun keyTyped(character: Char): Boolean {
+        when (character) {
+            'm', 'M' -> SoundManager.mute()
+        }
+        return true
+    }
+
 }

@@ -24,6 +24,15 @@ object SoundManager {
         }
     }
 
-    fun mute() { mute = !mute }
+    fun mute() {
+        mute = !mute
+        if (mute) {
+            bgm?.volume = 0f
+            sfx?.volume = 0f
+        } else {
+            bgm?.volume = BGM_LEVEL
+            sfx?.volume = SFX_LEVEL
+        }
+    }
 
 }

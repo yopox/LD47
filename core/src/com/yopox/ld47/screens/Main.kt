@@ -61,4 +61,11 @@ class Main(game: LD47) : Screen(game) {
         return true
     }
 
+    override fun keyTyped(character: Char): Boolean {
+        when (character) {
+            'm', 'M' -> SoundManager.mute()
+        }
+        return true
+    }
+
 }

@@ -10,7 +10,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     private var angle = PI / 4
     private var radius = CENTER
     private var leftOrbit = true
-    private var speed = 8f
+    private var speed = 4f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     private var forward = true
@@ -36,12 +36,12 @@ open class Orbital(texture: Texture) : Sprite(texture) {
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
         val RIGHT_FOCAL = Vector2(848f, Screen.HEIGHT / 2)
 
-        val RADIUS_MIN = 45f
-        val RADIUS_MAX = 210f
+        val RADIUS_MIN = 80f
         val CENTER = 145f
     }
 
     fun update() {
+
         when (facing) {
             Facing.FRONT -> faceFront()
             Facing.LEFT -> faceLeft()
@@ -73,11 +73,15 @@ open class Orbital(texture: Texture) : Sprite(texture) {
 
                 val targetFocal = if (leftOrbit) RIGHT_FOCAL else LEFT_FOCAL
                 val focalRadius = targetFocal.dst(orbitalX, orbitalY)
-                if (targetFocal.dst(orbitalX - dx, orbitalY - dy) > focalRadius
-                        && targetFocal.dst(orbitalX + dx, orbitalY + dy) > focalRadius) {
+                val previousRadius = targetFocal.dst(orbitalX - dx, orbitalY - dy)
+                val nextRadius = targetFocal.dst(orbitalX + dx, orbitalY + dy)
+                if (previousRadius > focalRadius && nextRadius > focalRadius) {
                     movement = Movement.CIRCULAR
                     leftOrbit = !leftOrbit
-                    angle = atan2(orbitalY - targetFocal.y, orbitalX - targetFocal.x).toDouble().normalize
+                    val nextAngle = atan2(orbitalY - targetFocal.y, orbitalX - targetFocal.x).toDouble().normalize
+                    angleDiff += (min((angle - nextAngle - PI).normalize, (PI - angle + nextAngle).normalize) / PI * 180).toFloat()
+                    println("Bump: $angleDiff")
+                    angle = nextAngle
                     radius = focalRadius
                 }
             }
@@ -87,38 +91,42 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     }
 
     fun faceRight() {
-        angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
+        if (angleDiff > -ANGLE_LIMIT) angleDiff -= ANGLE_SPEED
         when (movement) {
             Movement.CIRCULAR -> {
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
                 radius = max(RADIUS_MIN, radius + radiusDiff)
             }
             Movement.LINEAR -> {
-                x += LATERAL_SPEED * cos(linearAngle - PI / 2).toFloat()
-                y += LATERAL_SPEED * sin(linearAngle - PI / 2).toFloat()
+                if (!leftOrbit || leftOrbit && RIGHT_FOCAL.dst(orbitalX, orbitalY) > 2 * RADIUS_MIN) {
+                    x += LATERAL_SPEED * cos(linearAngle - PI / 2).toFloat()
+                    y += LATERAL_SPEED * sin(linearAngle - PI / 2).toFloat()
+                }
             }
         }
     }
 
     fun faceLeft() {
-        angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
+        if (angleDiff < ANGLE_LIMIT) angleDiff += ANGLE_SPEED
         when (movement) {
             Movement.CIRCULAR -> {
                 val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
                 radius = max(RADIUS_MIN, radius - radiusDiff)
             }
             Movement.LINEAR -> {
-                x += LATERAL_SPEED * cos(linearAngle + PI / 2).toFloat()
-                y += LATERAL_SPEED * sin(linearAngle + PI / 2).toFloat()
+                if (leftOrbit || !leftOrbit && LEFT_FOCAL.dst(orbitalX, orbitalY) > 2 * RADIUS_MIN) {
+                    x += LATERAL_SPEED * cos(linearAngle + PI / 2).toFloat()
+                    y += LATERAL_SPEED * sin(linearAngle + PI / 2).toFloat()
+                }
             }
         }
 
     }
 
     fun faceFront() {
-        if (angleDiff < 0) angleDiff = min(angleDiff + ANGLE_SPEED, 0f)
-        if (angleDiff > 0) angleDiff = max(angleDiff - ANGLE_SPEED, 0f)
-        if (abs(angleDiff) < ANGLE_SPEED) angleDiff = 0f
+        if (angleDiff < 0) angleDiff = min(angleDiff + ANGLE_SPEED / 3, 0f)
+        if (angleDiff > 0) angleDiff = max(angleDiff - ANGLE_SPEED / 3, 0f)
+        if (abs(angleDiff) < ANGLE_SPEED / 3) angleDiff = 0f
     }
 
     private fun linearAngle(): Double? {

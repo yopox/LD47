@@ -10,7 +10,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     private var angle = PI / 4
     private var radius = CENTER
     private var leftOrbit = true
-    private var speed = 6f
+    private var speed = 8f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     private var forward = true
@@ -123,8 +123,10 @@ open class Orbital(texture: Texture) : Sprite(texture) {
 
     private fun linearAngle(): Double? {
         return when {
-            forward && leftOrbit && angle > 2 * PI - MIN_CIRCULAR_ANGLE -> MIN_CIRCULAR_ANGLE
-            forward && !leftOrbit && angle < -PI + MIN_CIRCULAR_ANGLE -> PI - MIN_CIRCULAR_ANGLE
+            forward && leftOrbit && angle > 2 * PI - MIN_CIRCULAR_ANGLE ->
+                (MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2) - PI)).normalize / 2
+            forward && !leftOrbit && angle < -PI + MIN_CIRCULAR_ANGLE ->
+                (PI - MIN_CIRCULAR_ANGLE + (atan2(orbitalY - Screen.HEIGHT / 2, orbitalX - Screen.WIDTH / 2) - PI)).normalize / 2
             else -> null
         }
     }

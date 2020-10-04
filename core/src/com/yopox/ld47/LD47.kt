@@ -2,6 +2,7 @@ package com.yopox.ld47
 
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.screens.Main
@@ -19,8 +20,8 @@ class LD47 : KtxGame<Screen>() {
 
         Fonts.genFonts()
         with(assetManager) {
-            load("sprites/car.png", Texture::class.java)
-            load("circuit/global.png", Texture::class.java)
+            for ((_, path) in Assets.sprites) { load(path, Texture::class.java) }
+            for ((_, path) in Assets.sounds) { load(path, Music::class.java) }
             finishLoading()
         }
 

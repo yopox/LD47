@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
+import com.yopox.ld47.Resources
+import com.yopox.ld47.SoundManager
 import com.yopox.ld47.graphics.Button
 import com.yopox.ld47.graphics.Fonts.drawCentered
 import com.yopox.ld47.graphics.Fonts.fontTitle
@@ -18,6 +21,11 @@ class Title(game: LD47) : Screen(game) {
                     game.setScreen<Main>()
                 }
         )
+    }
+
+    override fun show() {
+        super.show()
+        SoundManager.play(Resources.OST_TITLE)
     }
 
     override fun render(delta: Float) {

@@ -10,7 +10,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     private var angle = PI / 4
     private var radius = CENTER
     private var leftOrbit = true
-    private var speed = 8f
+    private var speed = 6f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     private var forward = true
@@ -36,8 +36,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
         val RIGHT_FOCAL = Vector2(848f, Screen.HEIGHT / 2)
 
-        val RADIUS_MIN = 45f
-        val RADIUS_MAX = 210f
+        val RADIUS_MIN = 80f
         val CENTER = 145f
     }
 

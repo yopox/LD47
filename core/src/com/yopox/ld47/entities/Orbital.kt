@@ -98,8 +98,10 @@ open class Orbital(texture: Texture) : Sprite(texture) {
                 radius = max(RADIUS_MIN, radius + radiusDiff)
             }
             Movement.LINEAR -> {
-                x += LATERAL_SPEED * cos(linearAngle - PI / 2).toFloat()
-                y += LATERAL_SPEED * sin(linearAngle - PI / 2).toFloat()
+                if (!leftOrbit || leftOrbit && RIGHT_FOCAL.dst(orbitalX, orbitalY) > 2 * RADIUS_MIN) {
+                    x += LATERAL_SPEED * cos(linearAngle - PI / 2).toFloat()
+                    y += LATERAL_SPEED * sin(linearAngle - PI / 2).toFloat()
+                }
             }
         }
     }
@@ -112,8 +114,10 @@ open class Orbital(texture: Texture) : Sprite(texture) {
                 radius = max(RADIUS_MIN, radius - radiusDiff)
             }
             Movement.LINEAR -> {
-                x += LATERAL_SPEED * cos(linearAngle + PI / 2).toFloat()
-                y += LATERAL_SPEED * sin(linearAngle + PI / 2).toFloat()
+                if (leftOrbit || !leftOrbit && LEFT_FOCAL.dst(orbitalX, orbitalY) > 2 * RADIUS_MIN) {
+                    x += LATERAL_SPEED * cos(linearAngle + PI / 2).toFloat()
+                    y += LATERAL_SPEED * sin(linearAngle + PI / 2).toFloat()
+                }
             }
         }
 

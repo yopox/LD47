@@ -10,7 +10,7 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     private var angle = PI / 4
     private var radius = CENTER
     private var leftOrbit = true
-    private var speed = 3f
+    private var speed = 6f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     private var forward = true
@@ -87,15 +87,31 @@ open class Orbital(texture: Texture) : Sprite(texture) {
     }
 
     fun faceRight() {
-        angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
-        val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
-        radius = min(RADIUS_MAX, max(RADIUS_MIN, radius + radiusDiff))
+        when (movement) {
+            Movement.CIRCULAR -> {
+                angleDiff = max(angleDiff - ANGLE_SPEED, -ANGLE_LIMIT)
+                val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
+                radius = max(RADIUS_MIN, radius + radiusDiff)
+            }
+            Movement.LINEAR -> {
+                x += speed / 2 * cos(linearAngle - PI / 2).toFloat()
+                y += speed / 2 * sin(linearAngle - PI / 2).toFloat()
+            }
+        }
     }
 
     fun faceLeft() {
-        angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
-        val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
-        radius = min(RADIUS_MAX, max(RADIUS_MIN, radius - radiusDiff))
+        when (movement) {
+            Movement.CIRCULAR -> {
+                angleDiff = min(angleDiff + ANGLE_SPEED, ANGLE_LIMIT)
+                val radiusDiff = if (leftOrbit) LATERAL_SPEED else -LATERAL_SPEED
+                radius = max(RADIUS_MIN, radius - radiusDiff)
+            }
+            Movement.LINEAR -> {
+                x += speed / 2 * cos(linearAngle + PI / 2).toFloat()
+                y += speed / 2 * sin(linearAngle + PI / 2).toFloat()
+            }
+        }
 
     }
 

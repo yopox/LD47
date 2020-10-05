@@ -15,7 +15,8 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true
-    internal var speed = 6f
+    internal var speed = 3f
+    internal var acceleration = 1f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true
@@ -38,6 +39,7 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
 
         val ANGLE_LIMIT = 18f
         val LATERAL_SPEED = 4.5f
+        val ACCELERATION_STEP = 0.01f
 
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
         val RIGHT_FOCAL = Vector2(848f, Screen.HEIGHT / 2)
@@ -66,6 +68,18 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     }
 
     open fun update() {
+        // Acceleration
+        when {
+            acceleration > 0.0f -> {
+                speed += ACCELERATION_STEP
+                acceleration -= ACCELERATION_STEP
+            }
+            acceleration < 0.0f -> {
+                speed += -ACCELERATION_STEP
+                acceleration -= -ACCELERATION_STEP
+            }
+        }
+
         when (facing) {
             Facing.LEFT -> faceLeft()
             Facing.RIGHT -> faceRight()
@@ -223,7 +237,7 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
 
     open fun hit(collision: Collision, otherOrbital: Orbital?) {}
 
-    internal fun triggerHit() {
+    open fun triggerHit() {
         if (!hit) {
             hit = true
             invulnerabilityFrames = 60

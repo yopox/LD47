@@ -18,18 +18,29 @@ import com.yopox.ld47.graphics.Fonts
 import ktx.graphics.use
 import java.math.BigDecimal
 import java.text.DecimalFormat
-import kotlin.math.PI
+import kotlin.math.pow
 
 class Main(game: LD47) : Screen(game) {
 
-    private val player = Player()
-    private val boss = Boss()
+    enum class State {
+        INFINITE, PAUSE, GAME_OVER
+    }
+
+    private var player = Player()
+    private var enemies = arrayListOf<Orbital>()
     private val background = LD47.assetManager.get(Assets.sprites[Resources.BACKGROUND], Texture::class.java)
     private val gui_bg = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG], Texture::class.java)
     private var score = BigDecimal.ZERO
     private val decimalFormat = DecimalFormat("000000000")
+    private var state = State.INFINITE
 
-    override fun reset() {}
+    override fun reset() {
+        state = State.INFINITE
+        score = BigDecimal.ZERO
+        player = Player()
+        enemies.clear()
+        enemies.add(Boss())
+    }
 
     override fun show() {
         super.show()
@@ -39,20 +50,31 @@ class Main(game: LD47) : Screen(game) {
     override fun render(delta: Float) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        player.update()
-        boss.update()
-        score = score.add(BigDecimal.valueOf(player.speed.toDouble()))
+        when (state) {
+            State.INFINITE -> {
+                updateEntities()
+                drawGame()
+            }
+            State.PAUSE -> {
+                drawGame()
+            }
+            State.GAME_OVER -> {
+                drawGame()
+            }
+        }
 
-        val collision = player.collidesWith(boss)
-        if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, boss)
+        // Game Over
+        if (player.nitroCounter < 0) state = State.GAME_OVER
+    }
 
+    private fun drawGame() {
         batch.use { batch ->
             // Background
             batch.draw(background, 0f, 0f)
 
             // Sprites
             player.draw(batch)
-            boss.draw(batch)
+            enemies.forEach { it.draw(batch) }
 
             // GUI
             batch.draw(gui_bg, 0f, HEIGHT - gui_bg.height)
@@ -63,14 +85,30 @@ class Main(game: LD47) : Screen(game) {
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
             buttons.forEach { button -> button.drawBorder(renderer) }
+
+            renderer.color = Color.CYAN
+            renderer.rect(0f, HEIGHT - gui_bg.height - 4f, player.nitroCounter * 4, 4f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.CYAN
-            renderer.polygon(player.getCoordinates().first.toArray())
+/*          renderer.polygon(player.getCoordinates().first.toArray())
             renderer.polygon(player.getCoordinates().second.toArray())
-            renderer.polygon(boss.getCoordinates().first.toArray())
-            renderer.polygon(boss.getCoordinates().second.toArray())
+            enemies.forEach {
+                renderer.polygon(it.getCoordinates().first.toArray())
+                renderer.polygon(it.getCoordinates().second.toArray())
+            }*/
+        }
+    }
+
+    private fun updateEntities() {
+        player.update()
+        score = score.add(BigDecimal.valueOf(player.speed.pow(2).toDouble()))
+
+        enemies.forEach {
+            it.update()
+            val collision = player.collidesWith(it)
+            if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, it)
         }
     }
 
@@ -92,7 +130,17 @@ class Main(game: LD47) : Screen(game) {
 
     override fun keyTyped(character: Char): Boolean {
         when (character) {
-            'm', 'M' -> SoundManager.mute()
+            'm' -> SoundManager.mute()
+            '\u001B' -> {
+                when (state) {
+                    State.INFINITE -> state = State.PAUSE
+                    State.PAUSE -> state = State.INFINITE
+                    else -> Unit
+                }
+            }
+            ' ' -> player.nitro()
+            'x' -> player.brake()
+            'r' -> reset()
         }
         return true
     }

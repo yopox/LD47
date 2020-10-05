@@ -63,7 +63,7 @@ object SoundManager {
             State.OFF -> {
                 bgm = LD47.assetManager.get(path, Music::class.java).also {
                     it.play()
-                    it.volume = BGM_LEVEL
+                    it.volume = if (mute) 0f else BGM_LEVEL
                     it.isLooping = true
                 }
                 currentBgmLevel = BGM_LEVEL

@@ -20,6 +20,16 @@ class InfiniteRace(game: LD47) : Screen(game) {
         COUNT, INFINITE, PAUSE, GAME_OVER
     }
 
+    enum class SequencerState {
+        NORMAL, BOSS, NORMAL_ALT, BOSS_ALT
+    }
+
+    val SequencerState.isBoss: Boolean
+    get() = when (this) {
+        SequencerState.NORMAL, SequencerState.NORMAL_ALT -> false
+        else -> true
+    }
+
     private var player = Player()
     private var enemies = arrayListOf<Orbital>()
     private var bonuses = arrayListOf<Bonus>()
@@ -28,11 +38,16 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
     private var state = State.COUNT
     private var internalFrame = 0
+    private var sequencerState = SequencerState.NORMAL
 
     companion object {
         val scoreFormatter = DecimalFormat("000000000")
         val speedFormatter = DecimalFormat("000")
         private var myScore: BigDecimal = BigDecimal.ZERO
+
+        private val BONUS_PROBABILITY = 0.25f
+        private val CROSSER_PROBABILITY = 0.35f
+        private val ALT_PROBABILITY = 0.25f
 
         val score: BigDecimal get() = myScore
     }
@@ -43,9 +58,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
         player = Player()
         enemies.clear()
         bonuses.clear()
-        enemies.add(Boss())
-        enemies.add(Crosser())
-        bonuses.add(Bonus())
         background = Assets.getTexture(Levels.selected.background)
         internalFrame = 0
         blockInput = false
@@ -61,6 +73,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
         when (state) {
             State.INFINITE -> {
+                updateSequencer()
                 updateEntities()
                 drawGame()
             }
@@ -99,10 +112,52 @@ class InfiniteRace(game: LD47) : Screen(game) {
         // Game Over
         if (player.nitroCounter < 0 && state == State.INFINITE) {
             state = State.GAME_OVER
+            internalFrame = 0
             blockInput = true
             SoundManager.stop()
             SoundManager.sfx(Resources.SFX_GAME_OVER)
         }
+    }
+
+    private fun updateSequencer() {
+        internalFrame += 1
+
+        if (internalFrame % 120 == 0) {
+            // Spawn a bonus
+            if (LD47.random.nextFloat() <= BONUS_PROBABILITY && bonuses.size < 2) bonuses.add(Bonus())
+
+            // Spawn a crosser
+            if (LD47.random.nextFloat() <= CROSSER_PROBABILITY) enemies.add(Crosser())
+
+        }
+
+        if (internalFrame >= 1800 && !sequencerState.isBoss) {
+            if (LD47.random.nextFloat() <= ALT_PROBABILITY) {
+                sequencerState = SequencerState.BOSS_ALT
+            } else {
+                sequencerState = SequencerState.BOSS
+            }
+            internalFrame = 0
+            enemies.add(Boss())
+            SoundManager.stop()
+            SoundManager.sfx(Resources.SFX_BOSS)
+        }
+
+        if (internalFrame > 100 && sequencerState.isBoss && enemies.none { it is Boss }) {
+            if (LD47.random.nextFloat() <= ALT_PROBABILITY) {
+                sequencerState = SequencerState.NORMAL_ALT
+                SoundManager.play(Resources.OST_LEVEL_ALT)
+            } else {
+                sequencerState = SequencerState.NORMAL
+                SoundManager.play(Resources.OST_LEVEL)
+            }
+            internalFrame = 0
+        }
+
+        if (sequencerState.isBoss && internalFrame == 100) {
+            SoundManager.play(if (sequencerState == SequencerState.BOSS) Resources.OST_BOSS else Resources.OST_BOSS_ALT)
+        }
+
     }
 
     private fun drawGame() {

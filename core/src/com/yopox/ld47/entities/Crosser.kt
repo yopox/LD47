@@ -27,6 +27,8 @@ class Crosser: Orbital(Levels.selected.enemy) {
 
         x += speed * cos(angle).toFloat()
         y += speed * sin(angle).toFloat()
+
+        if (speed >= 3 * Levels.selected.minSpeed) toDestroy = true
     }
 
     override fun hit(collision: Companion.Collision, otherOrbital: Orbital?) {

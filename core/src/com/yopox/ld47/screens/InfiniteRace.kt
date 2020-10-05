@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.yopox.ld47.*
-import com.yopox.ld47.entities.Boss
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
@@ -19,7 +18,7 @@ import kotlin.math.pow
 class InfiniteRace(game: LD47) : Screen(game) {
 
     enum class State {
-        INFINITE, PAUSE, GAME_OVER
+        COUNT, INFINITE, PAUSE, GAME_OVER
     }
 
     private var player = Player()
@@ -27,8 +26,8 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private var background = Assets.getTexture(Levels.levels[LevelSelection.selected].background)
     private val gui_bg = Assets.getTexture(Resources.GUI_BG)
     private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
-    private var state = State.INFINITE
-    private var gameOverFrame = 0
+    private var state = State.COUNT
+    private var internalFrame = 0
 
     companion object {
         val scoreFormatter = DecimalFormat("000000000")
@@ -38,14 +37,14 @@ class InfiniteRace(game: LD47) : Screen(game) {
     }
 
     override fun reset() {
-        state = State.INFINITE
+        state = State.COUNT
         score = BigDecimal.ZERO
         player = Player()
         enemies.clear()
         background = Assets.getTexture(Levels.selected.background)
-        gameOverFrame = 0
+        internalFrame = 0
         blockInput = false
-        SoundManager.play(Resources.OST_LEVEL)
+        SoundManager.stop()
     }
 
     override fun show() {
@@ -60,21 +59,33 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 updateEntities()
                 drawGame()
             }
+            State.COUNT -> {
+                drawGame()
+                internalFrame += 1
+                when (internalFrame) {
+                    16 ->  SoundManager.sfx(Resources.SFX_321)
+                    170 -> {
+                        state = State.INFINITE
+                        SoundManager.play(Resources.OST_LEVEL)
+                        internalFrame = 0
+                    }
+                }
+            }
             State.PAUSE -> {
                 drawGame()
             }
             State.GAME_OVER -> {
                 drawGame()
-                gameOverFrame += 1
+                internalFrame += 1
                 Gdx.gl.glEnable(GL30.GL_BLEND)
                 Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
                 shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
-                    renderer.color = Color(0f, 0f, 0f, 0.006f * gameOverFrame)
+                    renderer.color = Color(0f, 0f, 0f, 0.006f * internalFrame)
                     renderer.rect(0f, 0f, WIDTH, HEIGHT)
                 }
                 Gdx.gl.glDisable(GL30.GL_BLEND)
 
-                if (0.004f * gameOverFrame > 0.98) {
+                if (0.004f * internalFrame > 0.98) {
                     game.setScreen<GameOver>()
                 }
             }
@@ -84,6 +95,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
         if (player.nitroCounter < 0 && state == State.INFINITE) {
             state = State.GAME_OVER
             blockInput = true
+            SoundManager.stop()
             SoundManager.sfx(Resources.SFX_GAME_OVER)
         }
     }

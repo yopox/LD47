@@ -3,6 +3,8 @@ package com.yopox.ld47.entities
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Player : Orbital(Levels.selected.car) {
 
@@ -15,6 +17,11 @@ class Player : Orbital(Levels.selected.car) {
     init {
         setOriginCenter()
         radius += 50f
+
+        val dx = radius * cos(angle).toFloat()
+        val dy = radius * sin(angle).toFloat()
+        val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
+        this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
     }
 
     override fun update() {

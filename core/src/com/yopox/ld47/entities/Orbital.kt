@@ -15,7 +15,7 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true
-    internal var speed = 3f
+    internal var speed = 6f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true
@@ -37,7 +37,6 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
         }
 
         val ANGLE_LIMIT = 18f
-        val ANGLE_SPEED = 6f
         val LATERAL_SPEED = 4.5f
 
         val LEFT_FOCAL = Vector2(426f, Screen.HEIGHT / 2)
@@ -122,9 +121,9 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
                 (if (facing == Facing.RIGHT) -ANGLE_LIMIT else 0f) + 360f * 2) % 360
         val diff = abs(oldRotation - targetAngle)
         val nextRotation = when {
-            abs(oldRotation - targetAngle) < ANGLE_SPEED -> targetAngle
-            oldRotation - targetAngle < 0 -> oldRotation + if (diff < 180) ANGLE_SPEED else -ANGLE_SPEED
-            oldRotation - targetAngle > 0 -> oldRotation - if (diff < 180) ANGLE_SPEED else -ANGLE_SPEED
+            abs(oldRotation - targetAngle) < 2 * speed -> targetAngle
+            oldRotation - targetAngle < 0 -> oldRotation + if (diff < 180) 2 * speed else -2 * speed
+            oldRotation - targetAngle > 0 -> oldRotation - if (diff < 180) 2 * speed else -2 * speed
             else -> targetAngle
         }
         this.rotation = nextRotation + rotationCorrection()

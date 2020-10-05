@@ -13,6 +13,7 @@ class Boss : Orbital(Resources.CAR2) {
         forward = false
         radius -= 20f
         angle = PI
+        speed = 4f
         rotation = (angle / PI * 180).toFloat() + rotationCorrection()
     }
 

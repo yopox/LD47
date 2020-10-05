@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2
 object Fonts {
 
     lateinit var font: BitmapFont
+    lateinit var fontSmall: BitmapFont
     lateinit var fontItalic: BitmapFont
     lateinit var fontTitle: BitmapFont
 
@@ -24,6 +25,7 @@ object Fonts {
 
     fun genFonts() {
         font = bitmapFont("JetBrainsMono-Medium.ttf", 36)
+        fontSmall = bitmapFont("JetBrainsMono-Medium.ttf", 28)
         fontTitle = bitmapFont("JetBrainsMono-Medium.ttf", 72)
         fontItalic = bitmapFont("JetBrainsMono-Medium-Italic.ttf", 36)
     }

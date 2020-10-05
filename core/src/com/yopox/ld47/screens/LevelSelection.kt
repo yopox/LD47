@@ -26,6 +26,11 @@ class LevelSelection(game: LD47) : Screen(game) {
 
     override fun reset() {}
 
+    override fun show() {
+        super.show()
+        SoundManager.play(Resources.OST_GAME_OVER)
+    }
+
     fun update() {
         background = Assets.getTexture(Levels.selected.background)
         car = Assets.getTexture(Levels.selected.car)
@@ -48,7 +53,6 @@ class LevelSelection(game: LD47) : Screen(game) {
         batch.use { batch ->
             Fonts.fontTitle.draw(batch, Levels.selected.name, 64f * 3, HEIGHT - 64f - 36f)
             batch.draw(car, 64f * 3, HEIGHT - 64f * 6)
-            Fonts.fontSmall.draw(batch, "CAR", 64f * 5.2f, HEIGHT - 64f * 5 + 10f)
             Fonts.fontItalic.draw(batch, Levels.selected.carName, 64f * 5.2f, HEIGHT - 64f * 5 - 24f)
             Fonts.font.draw(batch, Levels.selected.description, 64f * 3, HEIGHT - 64f * 7f)
 

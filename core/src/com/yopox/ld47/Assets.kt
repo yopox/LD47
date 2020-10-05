@@ -35,7 +35,13 @@ enum class Resources {
     MALUS,
     GUI_BG,
     GUI_BG2,
-    TITLE_BG
+    TITLE_BG,
+    TITLE_TITLE,
+    TITLE_SUB,
+    TITLE_CAR1,
+    TITLE_CAR2,
+    TITLE_CAR3
+
 }
 
 object Assets {
@@ -58,7 +64,12 @@ object Assets {
             Resources.MALUS to "bonus/malus.png",
             Resources.GUI_BG to "gui_bg.png",
             Resources.GUI_BG2 to "gui_bg2.png",
-            Resources.TITLE_BG to "titlescreen/background.png"
+            Resources.TITLE_BG to "titlescreen/background.png",
+            Resources.TITLE_TITLE to "titlescreen/title.png",
+            Resources.TITLE_SUB to "titlescreen/subtitle.png",
+            Resources.TITLE_CAR1 to "titlescreen/cartitle1.png",
+            Resources.TITLE_CAR2 to "titlescreen/cartitle2.png",
+            Resources.TITLE_CAR3 to "titlescreen/cartitle3.png"
     )
 
     val bgms = mapOf(

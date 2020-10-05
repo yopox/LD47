@@ -1,6 +1,7 @@
 package com.yopox.ld47.entities
 
 import com.yopox.ld47.Resources
+import com.yopox.ld47.SoundManager
 
 class Player : Orbital(Resources.CAR1) {
 
@@ -41,11 +42,15 @@ class Player : Orbital(Resources.CAR1) {
     override fun triggerHit() {
         super.triggerHit()
         nitro -= HIT_COST
+        SoundManager.sfx(Resources.SFX_HIT)
     }
 
     fun nitro() {
-        nitro -= NITRO_COST
-        acceleration = 1f
+        if (acceleration < ACCELERATION_STEP) {
+            nitro -= NITRO_COST
+            acceleration = 1f
+            SoundManager.sfx(Resources.SFX_NITRO)
+        }
     }
 
     fun brake() {

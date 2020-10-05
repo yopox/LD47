@@ -41,12 +41,12 @@ class Main(game: LD47) : Screen(game) {
         score = BigDecimal.ZERO
         player = Player()
         enemies.clear()
-        enemies.add(Boss())
+        SoundManager.play(Resources.OST_LEVEL)
     }
 
     override fun show() {
         super.show()
-        SoundManager.play(Resources.OST_VROUM)
+        reset()
     }
 
     override fun render(delta: Float) {
@@ -66,7 +66,11 @@ class Main(game: LD47) : Screen(game) {
         }
 
         // Game Over
-        if (player.nitroCounter < 0) state = State.GAME_OVER
+        if (player.nitroCounter < 0 && state == State.INFINITE) {
+            state = State.GAME_OVER
+            SoundManager.sfx(Resources.SFX_GAME_OVER)
+            SoundManager.play(Resources.OST_GAME_OVER)
+        }
     }
 
     private fun drawGame() {
@@ -139,8 +143,14 @@ class Main(game: LD47) : Screen(game) {
             'm' -> SoundManager.mute()
             '\u001B' -> {
                 when (state) {
-                    State.INFINITE -> state = State.PAUSE
-                    State.PAUSE -> state = State.INFINITE
+                    State.INFINITE -> {
+                        state = State.PAUSE
+                        SoundManager.sfx(Resources.SFX_PAUSE)
+                    }
+                    State.PAUSE -> {
+                        state = State.INFINITE
+                        SoundManager.sfx(Resources.SFX_UNPAUSE)
+                    }
                     else -> Unit
                 }
             }

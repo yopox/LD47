@@ -12,7 +12,7 @@ object SoundManager {
     private var mute = false
 
     fun play(key: Resources) {
-        val path = Assets.sounds[key] ?: return
+        val path = Assets.bgms[key] ?: return
         bgm?.let {
             it.stop()
             it.dispose()
@@ -21,6 +21,15 @@ object SoundManager {
             it.play()
             it.volume = if (mute) 0f else BGM_LEVEL
             it.isLooping = true
+        }
+    }
+
+    fun sfx(key: Resources) {
+        val path = Assets.sfxs[key] ?: return
+        sfx = LD47.assetManager.get(path, Music::class.java).also {
+            it.play()
+            it.volume = if (mute) 0f else SFX_LEVEL
+            it.isLooping = false
         }
     }
 

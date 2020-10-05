@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.yopox.ld47.Resources
+import com.yopox.ld47.SoundManager
 import ktx.math.div
 import ktx.math.minus
 
@@ -44,6 +46,7 @@ class Button(val text: String, val pos: Vector2, val callback: () -> Unit) {
         if (clicked && contains(mouseX, mouseY)) {
             clicked = false
             callback()
+            SoundManager.sfx(Resources.SFX_BUTTON)
         }
     }
 

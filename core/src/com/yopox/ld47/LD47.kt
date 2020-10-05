@@ -23,7 +23,8 @@ class LD47 : KtxGame<Screen>() {
         Fonts.genFonts()
         with(assetManager) {
             for ((_, path) in Assets.sprites) { load(path, Texture::class.java) }
-            for ((_, path) in Assets.sounds) { load(path, Music::class.java) }
+            for ((_, path) in Assets.bgms) { load(path, Music::class.java) }
+            for ((_, path) in Assets.sfxs) { load(path, Music::class.java) }
             finishLoading()
         }
 

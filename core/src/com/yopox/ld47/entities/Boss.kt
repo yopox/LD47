@@ -2,12 +2,13 @@ package com.yopox.ld47.entities
 
 import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.Levels
+import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Boss(var lives: Int = 3) : Orbital(Levels.selected.enemy) {
+class Boss(var lives: Int = 3) : Orbital(Resources.CAR_BOSS) {
 
     var willCross = false
     var justUpdated = false

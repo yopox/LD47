@@ -41,7 +41,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND1
         override val gameOver: Resources = Resources.GAMEOVER1
         override val minSpeed: Float = 4f
-        override val tick: Int = 100
+        override val tick: Int = 60
     }
 
     private val level2 = object : Level() {
@@ -53,7 +53,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND2
         override val gameOver: Resources = Resources.GAMEOVER2
         override val minSpeed: Float = 5f
-        override val tick: Int = 75
+        override val tick: Int = 45
     }
 
     private val level3 = object : Level() {
@@ -65,7 +65,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND3
         override val gameOver: Resources = Resources.GAMEOVER3
         override val minSpeed: Float = 7f
-        override val tick: Int = 50
+        override val tick: Int = 30
     }
 
     val levels = arrayOf(level1, level2, level3)

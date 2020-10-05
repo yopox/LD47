@@ -3,12 +3,10 @@ package com.yopox.ld47.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.yopox.ld47.LD47
-import com.yopox.ld47.Levels
-import com.yopox.ld47.Resources
-import com.yopox.ld47.SoundManager
+import com.yopox.ld47.*
 import com.yopox.ld47.graphics.Button
 import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.graphics.Fonts.drawCentered
@@ -24,6 +22,7 @@ class GameOver(game: LD47) : Screen(game) {
     private var state = State.FADE_IN
     private var newHigh = false
     private var score = ""
+    private var gameOver: Texture? = null
 
     init {
         buttons.add(Button("TITLE", Vector2(WIDTH / 2, HEIGHT / 5)) { game.setScreen<Title>() })
@@ -39,6 +38,7 @@ class GameOver(game: LD47) : Screen(game) {
             newHigh = true
             Levels.selected.high = score
         }
+        gameOver = Assets.getTexture(Levels.selected.gameOver)
     }
 
     override fun reset() {
@@ -52,10 +52,21 @@ class GameOver(game: LD47) : Screen(game) {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
+            batch.draw(gameOver, 0f, 0f)
+        }
+
+        Gdx.gl.glEnable(GL30.GL_BLEND)
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
+        shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
+            renderer.color = Color(0f, 0f, 0f, 0.7f)
+            renderer.rect(0f, 0f, WIDTH, HEIGHT)
+        }
+        Gdx.gl.glDisable(GL30.GL_BLEND)
+
+        batch.use { batch ->
             Fonts.fontTitle.drawCentered(batch, "GAME OVER", Vector2(0f, HEIGHT / 2), Vector2(WIDTH,  HEIGHT / 2))
-            Fonts.fontItalic.drawCentered(batch, Levels.selected.name, Vector2(0f, HEIGHT / 4 + 24f), Vector2(WIDTH,  HEIGHT / 2))
-            Fonts.fontItalic.drawCentered(batch, "SCORE: $score" + if (newHigh) "      " else "", Vector2(0f, HEIGHT / 4 - 24f), Vector2(WIDTH,  HEIGHT / 2))
-            Fonts.fontItalic.drawCentered(batch, "HIGH:  " + Levels.selected.high + if (newHigh) " [NEW!]" else "", Vector2(0f, HEIGHT / 4 - 64f), Vector2(WIDTH,  HEIGHT / 2))
+            Fonts.fontItalic.drawCentered(batch, "SCORE: $score" + if (newHigh) "      " else "", Vector2(0f, HEIGHT / 4), Vector2(WIDTH,  HEIGHT / 2))
+            Fonts.fontItalic.drawCentered(batch, "HIGH:  " + Levels.selected.high + if (newHigh) " [NEW!]" else "", Vector2(0f, HEIGHT / 4 - 48f), Vector2(WIDTH,  HEIGHT / 2))
             buttons.forEach { it.draw(batch) }
         }
 

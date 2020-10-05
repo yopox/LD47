@@ -16,8 +16,8 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
     internal var leftOrbit = true
     internal var speed = 0f
     internal var acceleration = Levels.selected.minSpeed
-    private var movement = Movement.CIRCULAR
-    private var linearAngle = 0.0
+    internal var movement = Movement.CIRCULAR
+    internal var linearAngle = 0.0
     internal var forward = true
     var toDestroy = false
 
@@ -215,7 +215,7 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
         }
     }
 
-    private val Double.normalize: Double
+    internal val Double.normalize: Double
         get() = (this + ceil(abs(this)) * 2 * PI) % (2 * PI)
 
     val orbitalX: Float

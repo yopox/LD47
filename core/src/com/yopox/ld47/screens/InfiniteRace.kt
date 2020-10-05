@@ -209,7 +209,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             }
             ' ' -> player.nitro()
             'x' -> player.brake()
-//            'r' -> reset()
+            'r' -> reset()
         }
         return true
     }

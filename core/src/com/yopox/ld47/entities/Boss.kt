@@ -1,5 +1,6 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.Levels
 import com.yopox.ld47.screens.Screen
 import kotlin.math.PI
@@ -12,14 +13,34 @@ class Boss : Orbital(Levels.selected.enemy) {
     var justUpdated = false
     private var life = 1
 
+    private data class Starting(val leftOrbit: Boolean, val angle: Double, val pos: Vector2)
+
     init {
         setOriginCenter()
         forward = false
-        radius -= 20f
-        angle = PI
-        speed = 2f
-        rotation = (angle / PI * 180).toFloat() + rotationCorrection()
-        setCircularPosition()
+
+        movement = Companion.Movement.LINEAR
+
+        radius = Screen.HEIGHT
+        val startingPos = arrayOf(
+                Starting(true, 4 * PI / 5, Vector2(
+                        Screen.WIDTH / 2 + cos(4 * PI / 5).toFloat() * radius - 32f,
+                        Screen.HEIGHT / 2 + sin(4 * PI / 5).toFloat() * radius
+                )),
+                Starting(false, PI / 5, Vector2(
+                        Screen.WIDTH / 2 + cos(PI / 5).toFloat() * radius + 32f,
+                        Screen.HEIGHT / 2 + sin(PI / 5).toFloat() * radius
+                ))).random()
+
+        leftOrbit = startingPos.leftOrbit
+
+        acceleration = 1.5f * Levels.selected.minSpeed
+
+        x = startingPos.pos.x
+        y = startingPos.pos.y
+
+        linearAngle = (startingPos.angle - PI).normalize
+        angle = (linearAngle + if (leftOrbit) PI / 2 else -PI / 2).normalize
     }
 
     override fun shouldCross(): Boolean = willCross

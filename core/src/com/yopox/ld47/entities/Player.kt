@@ -18,6 +18,9 @@ class Player : Orbital(Levels.selected.car) {
     private val HIT_COST = 20f
     private val NITRO_REFILL = 30f
 
+    private val MAX_RADIUS = 310f
+    private var tick = 0
+
     init {
         setOriginCenter()
         radius += 50f
@@ -25,12 +28,15 @@ class Player : Orbital(Levels.selected.car) {
     }
 
     override fun update() {
+        tick %= 4
         super.update()
 
         when {
             nitroCounter < nitro -> nitroCounter += 1
             nitroCounter > nitro -> nitroCounter -= 1
         }
+
+        if (radius > MAX_RADIUS && tick == 0) nitro -= 1f
     }
 
     override fun hit(collision: Companion.Collision, otherOrbital: Orbital?) {

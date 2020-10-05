@@ -13,8 +13,8 @@ enum class Resources {
 object Assets {
 
     val sprites = mapOf(
-            Resources.CAR1 to "sprites/car1.png",
-            Resources.CAR2 to "sprites/car2.png",
+            Resources.CAR1 to "sprites/car3.png",
+            Resources.CAR2 to "sprites/car4.png",
             Resources.CAR3 to "sprites/car3.png",
             Resources.CAR4 to "sprites/car4.png",
             Resources.BACKGROUND to "circuit/global2.png"

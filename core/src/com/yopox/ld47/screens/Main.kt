@@ -34,6 +34,8 @@ class Main(game: LD47) : Screen(game) {
         player.update()
         boss.update()
 
+        if (player.collidesWith(boss)) player.hit()
+
         batch.use { batch ->
             // Background
             batch.draw(background, 0f, 0f)
@@ -48,6 +50,12 @@ class Main(game: LD47) : Screen(game) {
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
             buttons.forEach { button -> button.drawBorder(renderer) }
+        }
+
+        shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
+            renderer.color = Color.CYAN
+            renderer.polygon(player.getCoordinates().toArray())
+            renderer.polygon(boss.getCoordinates().toArray())
         }
     }
 

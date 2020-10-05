@@ -2,7 +2,9 @@ package com.yopox.ld47.entities
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.FloatArray
 import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
@@ -13,7 +15,7 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true
-    internal var speed = 4f
+    internal var speed = 3f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true
@@ -31,7 +33,7 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
             FRONT, LEFT, RIGHT
         }
 
-        val ANGLE_LIMIT = 10f
+        val ANGLE_LIMIT = 18f
         val ANGLE_SPEED = 6f
         val LATERAL_SPEED = 4.5f
 
@@ -40,6 +42,8 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
 
         val RADIUS_MIN = 80f
         val CENTER = 145f
+
+        val CHECKBOX_ASSIST = 8f
     }
 
     open fun update() {
@@ -162,10 +166,24 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     private val Double.normalize: Double
         get() = (this + ceil(abs(this)) * 2 * PI) % (2 * PI)
 
-    internal val orbitalX: Float
+    val orbitalX: Float
         get() = x + originX
 
-    internal val orbitalY: Float
+    val orbitalY: Float
         get() = y + originY
+
+    internal fun getCoordinates(): FloatArray {
+        val center = Vector2(orbitalX, orbitalY)
+        val ul = center.cpy().add(Vector2(originX - CHECKBOX_ASSIST, originY - CHECKBOX_ASSIST).rotate(rotation))
+        val ur = center.cpy().add(Vector2(originX - CHECKBOX_ASSIST, -originY + CHECKBOX_ASSIST).rotate(rotation))
+        val ll = center.cpy().add(Vector2(-originX + CHECKBOX_ASSIST, originY - CHECKBOX_ASSIST).rotate(rotation))
+        val lr = center.cpy().add(Vector2(-originX + CHECKBOX_ASSIST, -originY + CHECKBOX_ASSIST).rotate(rotation))
+        return FloatArray.with(ul.x, ul.y, ll.x, ll.y, lr.x, lr.y, ur.x, ur.y)
+    }
+
+    internal fun collidesWith(o2: Orbital): Boolean {
+        if (Vector2(o2.orbitalX, o2.orbitalY).dst(orbitalX, orbitalY) >= max(o2.height, o2.width) + max(height, width)) return false
+        return Intersector.intersectPolygons(getCoordinates(), o2.getCoordinates())
+    }
 
 }

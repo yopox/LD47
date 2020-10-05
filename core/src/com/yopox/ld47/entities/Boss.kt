@@ -31,4 +31,7 @@ class Boss : Orbital(Resources.CAR2) {
         }
     }
 
+    override fun hit(collision: Companion.Collision, otherOrbital: Orbital?) {
+    }
+
 }

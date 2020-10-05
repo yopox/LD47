@@ -4,27 +4,21 @@ import com.yopox.ld47.Resources
 
 class Player : Orbital(Resources.CAR1) {
 
-    private var hit = false
-    private var invulnerabilityFrames = 0
-
     init {
         setOriginCenter()
     }
 
-    fun hit() {
-        if (!hit) {
-            hit = true
-            invulnerabilityFrames = 60
-        }
-    }
-
-    override fun update() {
-        super.update()
-
-        if (hit) {
-            invulnerabilityFrames -= 1
-            this.setAlpha(if ((invulnerabilityFrames / 5) % 2 == 0) 1f else 0f)
-            if (invulnerabilityFrames == 0) hit = false
+    override fun hit(collision: Companion.Collision, otherOrbital: Orbital?) {
+        when (collision) {
+            Companion.Collision.NONE -> Unit
+            Companion.Collision.FRONT_FRONT -> triggerHit()
+            Companion.Collision.FRONT_BACK -> {
+                triggerHit(); otherOrbital?.triggerHit()
+            }
+            Companion.Collision.BACK_FRONT -> triggerHit()
+            Companion.Collision.BACK_BACK -> {
+                triggerHit(); otherOrbital?.triggerHit()
+            }
         }
     }
 

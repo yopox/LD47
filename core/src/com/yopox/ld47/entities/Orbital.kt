@@ -20,6 +20,9 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     private var linearAngle = 0.0
     internal var forward = true
 
+    internal var hit = false
+    internal var invulnerabilityFrames = 0
+
     var facing = Facing.FRONT
 
     companion object {
@@ -44,6 +47,23 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
         val CENTER = 145f
 
         val CHECKBOX_ASSIST = 8f
+
+        enum class Collision {
+            NONE,
+            FRONT_FRONT,
+            FRONT_BACK,
+            BACK_FRONT,
+            BACK_BACK
+        }
+
+        val Collision.invert: Collision
+        get() = when(this) {
+            Collision.NONE -> Collision.NONE
+            Collision.FRONT_FRONT -> Collision.FRONT_FRONT
+            Collision.FRONT_BACK -> Collision.BACK_FRONT
+            Collision.BACK_FRONT -> Collision.FRONT_BACK
+            Collision.BACK_BACK -> Collision.BACK_BACK
+        }
     }
 
     open fun update() {
@@ -108,6 +128,13 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
             else -> targetAngle
         }
         this.rotation = nextRotation + rotationCorrection()
+
+        // Update invulnerability frames
+        if (hit) {
+            invulnerabilityFrames -= 1
+            this.setAlpha(if ((invulnerabilityFrames / 5) % 2 == 0) 1f else 0f)
+            if (invulnerabilityFrames == 0) hit = false
+        }
     }
 
     open fun turn() {}
@@ -172,18 +199,36 @@ open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.s
     val orbitalY: Float
         get() = y + originY
 
-    internal fun getCoordinates(): FloatArray {
+    internal fun getCoordinates(): Pair<FloatArray, FloatArray> {
         val center = Vector2(orbitalX, orbitalY)
         val ul = center.cpy().add(Vector2(originX - CHECKBOX_ASSIST, originY - CHECKBOX_ASSIST).rotate(rotation))
         val ur = center.cpy().add(Vector2(originX - CHECKBOX_ASSIST, -originY + CHECKBOX_ASSIST).rotate(rotation))
+        val cl = center.cpy().add(Vector2(0f, originY - CHECKBOX_ASSIST).rotate(rotation))
+        val cr = center.cpy().add(Vector2(0f, -originY + CHECKBOX_ASSIST).rotate(rotation))
         val ll = center.cpy().add(Vector2(-originX + CHECKBOX_ASSIST, originY - CHECKBOX_ASSIST).rotate(rotation))
         val lr = center.cpy().add(Vector2(-originX + CHECKBOX_ASSIST, -originY + CHECKBOX_ASSIST).rotate(rotation))
-        return FloatArray.with(ul.x, ul.y, ll.x, ll.y, lr.x, lr.y, ur.x, ur.y)
+        return FloatArray.with(ul.x, ul.y, cl.x, cl.y, cr.x, cr.y, ur.x, ur.y) to FloatArray.with(ll.x, ll.y, cl.x, cl.y, cr.x, cr.y, lr.x, lr.y)
     }
 
-    internal fun collidesWith(o2: Orbital): Boolean {
-        if (Vector2(o2.orbitalX, o2.orbitalY).dst(orbitalX, orbitalY) >= max(o2.height, o2.width) + max(height, width)) return false
-        return Intersector.intersectPolygons(getCoordinates(), o2.getCoordinates())
+    internal fun collidesWith(o2: Orbital): Collision {
+        if (hit || o2.hit || Vector2(o2.orbitalX, o2.orbitalY).dst(orbitalX, orbitalY) >= max(o2.height, o2.width) + max(height, width)) return Collision.NONE
+        val collision = when {
+            Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().first) -> Collision.BACK_BACK
+            Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().second) -> Collision.BACK_FRONT
+            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().first) -> Collision.FRONT_BACK
+            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().second) ->  Collision.FRONT_FRONT
+            else -> Collision.NONE
+        }
+        return collision
+    }
+
+    open fun hit(collision: Collision, otherOrbital: Orbital?) {}
+
+    internal fun triggerHit() {
+        if (!hit) {
+            hit = true
+            invulnerabilityFrames = 60
+        }
     }
 
 }

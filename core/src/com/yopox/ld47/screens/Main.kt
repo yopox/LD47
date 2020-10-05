@@ -11,6 +11,7 @@ import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
 import com.yopox.ld47.entities.Boss
+import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
 import ktx.graphics.use
@@ -34,7 +35,8 @@ class Main(game: LD47) : Screen(game) {
         player.update()
         boss.update()
 
-        if (player.collidesWith(boss)) player.hit()
+        val collision = player.collidesWith(boss)
+        if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, boss)
 
         batch.use { batch ->
             // Background
@@ -54,8 +56,10 @@ class Main(game: LD47) : Screen(game) {
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.CYAN
-            renderer.polygon(player.getCoordinates().toArray())
-            renderer.polygon(boss.getCoordinates().toArray())
+            renderer.polygon(player.getCoordinates().first.toArray())
+            renderer.polygon(player.getCoordinates().second.toArray())
+            renderer.polygon(boss.getCoordinates().first.toArray())
+            renderer.polygon(boss.getCoordinates().second.toArray())
         }
     }
 

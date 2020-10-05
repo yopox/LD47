@@ -262,8 +262,8 @@ class InfiniteRace(game: LD47) : Screen(game) {
                     else -> Unit
                 }
             }
-            ' ' -> player.nitro()
-            'x' -> player.brake()
+            ' ', '\uF700' -> player.nitro()
+            'x', '\uF701' -> player.brake()
         }
         return true
     }

@@ -29,13 +29,8 @@ class Title(game: LD47) : Screen(game) {
 
     init {
         buttons.add(
-                Button("START", Vector2(WIDTH / 2 - 120f, 100f)) {
+                Button("START", Vector2(WIDTH / 2, 100f)) {
                     game.setScreen<LevelSelection>()
-                }
-        )
-        buttons.add(
-                Button("OST", Vector2(WIDTH / 2 + 120f, 100f)) {
-                    //game.setScreen<LevelSelection>()
                 }
         )
     }

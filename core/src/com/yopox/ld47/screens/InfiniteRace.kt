@@ -220,6 +220,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
         }
 
         bonuses.forEach {
+            it.update()
             val collision = player.collidesWith(it)
             if (collision != Orbital.Companion.Collision.NONE) player.collect(it)
         }

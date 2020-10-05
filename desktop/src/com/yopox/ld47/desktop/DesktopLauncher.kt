@@ -11,6 +11,7 @@ object DesktopLauncher {
         val config = LwjglApplicationConfiguration()
         config.width = Screen.WIDTH.toInt()
         config.height = Screen.HEIGHT.toInt()
+        config.title = "Infinite Racer"
         LwjglApplication(LD47(), config)
     }
 }

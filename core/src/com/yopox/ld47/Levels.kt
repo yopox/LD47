@@ -13,7 +13,7 @@ abstract class Level {
     abstract val carName: String
     abstract val description: String
     abstract val car: Resources
-    abstract val boss: Resources
+    abstract val enemy: Resources
     abstract val background: Resources
     abstract val gameOver: Resources
     abstract val minSpeed: Float
@@ -34,7 +34,7 @@ object Levels {
         override val carName: String = "SUPER CAR"
         override val description: String = "This level is super.\nLine 2 is super too!\nLine 3 is okay..."
         override val car: Resources = Resources.CAR1
-        override val boss: Resources = Resources.CAR2
+        override val enemy: Resources = Resources.CAR2
         override val background: Resources = Resources.BACKGROUND1
         override val gameOver: Resources = Resources.GAMEOVER1
         override val minSpeed: Float = 4f
@@ -45,7 +45,7 @@ object Levels {
         override val carName: String = "ALSO SUPER CAR"
         override val description: String = "This level more super.\nLine 2 is more super too!\nLine 3 is still okay..."
         override val car: Resources = Resources.CAR3
-        override val boss: Resources = Resources.CAR4
+        override val enemy: Resources = Resources.CAR4
         override val background: Resources = Resources.BACKGROUND2
         override val gameOver: Resources = Resources.GAMEOVER2
         override val minSpeed: Float = 5.5f

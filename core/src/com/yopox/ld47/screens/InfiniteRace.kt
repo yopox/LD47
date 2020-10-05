@@ -6,11 +6,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.yopox.ld47.*
-import com.yopox.ld47.entities.Bonus
-import com.yopox.ld47.entities.Boss
-import com.yopox.ld47.entities.Orbital
+import com.yopox.ld47.entities.*
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
-import com.yopox.ld47.entities.Player
 import com.yopox.ld47.graphics.Fonts
 import ktx.graphics.use
 import java.math.BigDecimal
@@ -47,6 +44,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
         enemies.clear()
         bonuses.clear()
         enemies.add(Boss())
+        enemies.add(Crosser())
         bonuses.add(Bonus())
         background = Assets.getTexture(Levels.selected.background)
         internalFrame = 0
@@ -148,6 +146,22 @@ class InfiniteRace(game: LD47) : Screen(game) {
             it.update()
             val collision = player.collidesWith(it)
             if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, it)
+
+            if (!it.hit) {
+                for (enemy in enemies) {
+                    if (enemy != it) {
+                        val collision = enemy.collidesWith(it)
+                        if (collision != Orbital.Companion.Collision.NONE) {
+                            it.hit(collision)
+                            enemy.hit(collision)
+                        }
+                    }
+                }
+            }
+        }
+        enemies.filter { it.toDestroy }.forEach {
+            if (it is Boss) bossDefeated()
+            enemies.remove(it)
         }
 
         bonuses.forEach {
@@ -155,6 +169,10 @@ class InfiniteRace(game: LD47) : Screen(game) {
             if (collision != Orbital.Companion.Collision.NONE) player.collect(it)
         }
         bonuses.filter { it.toDestroy }.forEach { bonuses.remove(it) }
+    }
+
+    private fun bossDefeated() {
+        SoundManager.play(Resources.OST_LEVEL_ALT)
     }
 
     override fun keyDown(keycode: Int): Boolean {

@@ -38,12 +38,12 @@ class Player : Orbital(Levels.selected.car) {
             Companion.Collision.NONE -> Unit
             Companion.Collision.FRONT_FRONT -> triggerHit()
             Companion.Collision.FRONT_BACK -> {
-                otherOrbital?.triggerHit()
+                otherOrbital?.hit(Companion.Collision.FRONT_BACK.invert)
                 if (acceleration < ACCELERATION_STEP) triggerHit()
             }
             Companion.Collision.BACK_FRONT -> triggerHit()
             Companion.Collision.BACK_BACK -> {
-                otherOrbital?.triggerHit()
+                otherOrbital?.hit(Companion.Collision.BACK_BACK.invert)
                 if (acceleration < ACCELERATION_STEP) triggerHit()
             }
         }

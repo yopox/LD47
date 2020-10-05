@@ -69,16 +69,7 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
 
     open fun update() {
         // Acceleration
-        when {
-            acceleration > 0.0f -> {
-                speed += ACCELERATION_STEP
-                acceleration -= ACCELERATION_STEP
-            }
-            acceleration < 0.0f -> {
-                speed += -ACCELERATION_STEP
-                acceleration -= -ACCELERATION_STEP
-            }
-        }
+        applyAcceleration()
 
         when (facing) {
             Facing.LEFT -> faceLeft()
@@ -140,10 +131,27 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
         this.rotation = nextRotation + rotationCorrection()
 
         // Update invulnerability frames
+        updateInvulnerability()
+    }
+
+    internal fun updateInvulnerability() {
         if (hit) {
             invulnerabilityFrames -= 1
             this.setAlpha(if ((invulnerabilityFrames / 5) % 2 == 0) 1f else 0f)
             if (invulnerabilityFrames == 0) hit = false
+        }
+    }
+
+    internal fun applyAcceleration() {
+        when {
+            acceleration > 0.0f -> {
+                speed += ACCELERATION_STEP
+                acceleration -= ACCELERATION_STEP
+            }
+            acceleration < 0.0f -> {
+                speed += -ACCELERATION_STEP
+                acceleration -= -ACCELERATION_STEP
+            }
         }
     }
 
@@ -239,12 +247,12 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
         return collision
     }
 
-    open fun hit(collision: Collision, otherOrbital: Orbital?) {}
+    open fun hit(collision: Collision, otherOrbital: Orbital? = null) {}
 
     open fun triggerHit() {
         if (!hit) {
             hit = true
-            invulnerabilityFrames = 60
+            invulnerabilityFrames = 80
         }
     }
 

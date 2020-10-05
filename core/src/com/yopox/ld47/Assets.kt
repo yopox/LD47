@@ -60,7 +60,7 @@ object Assets {
             Resources.BACKGROUND2 to "circuit/global2.png",
             Resources.GAMEOVER2 to "gameover/gameover2.png",
             Resources.BACKGROUND3 to "circuit/global3-03.png",
-            Resources.GAMEOVER3 to "gameover/gameover2.png",
+            Resources.GAMEOVER3 to "gameover/gameover3.png",
             Resources.BONUS_BOOST to "bonus/bonusB.png",
             Resources.BONUS_NITRO to "bonus/bonusN.png",
             Resources.MALUS to "bonus/malus.png",

@@ -52,9 +52,10 @@ class LevelSelection(game: LD47) : Screen(game) {
 
         batch.use { batch ->
             Fonts.fontTitle.draw(batch, Levels.selected.name, 64f * 3, HEIGHT - 64f - 36f)
-            batch.draw(car, 64f * 3, HEIGHT - 64f * 6)
-            Fonts.fontItalic.draw(batch, Levels.selected.carName, 64f * 5.2f, HEIGHT - 64f * 5 - 24f)
-            Fonts.font.draw(batch, Levels.selected.description, 64f * 3, HEIGHT - 64f * 7f)
+            batch.draw(car, 64f * 3, HEIGHT - 64f * 6 + 32f)
+            Fonts.fontItalic.draw(batch, Levels.selected.carName, 64f * 5.2f, HEIGHT - 64f * 5 - 24f + 32f)
+            Fonts.font.draw(batch, Levels.selected.description, 64f * 3, HEIGHT - 64f * 7f + 48f)
+            Fonts.fontItalic.draw(batch, "HIGH SCORE: ${Levels.selected.high}", 64f * 3, HEIGHT - 64f * 7f - 108f)
 
             buttons.forEach { it.draw(batch) }
         }

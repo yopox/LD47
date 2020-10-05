@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.yopox.ld47.*
+import com.yopox.ld47.entities.Boss
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
@@ -32,15 +33,17 @@ class InfiniteRace(game: LD47) : Screen(game) {
     companion object {
         val scoreFormatter = DecimalFormat("000000000")
         val speedFormatter = DecimalFormat("000")
-        var score = BigDecimal.ZERO
-            get() = field
+        private var myScore: BigDecimal = BigDecimal.ZERO
+
+        val score: BigDecimal get() = myScore
     }
 
     override fun reset() {
         state = State.COUNT
-        score = BigDecimal.ZERO
+        myScore = BigDecimal.ZERO
         player = Player()
         enemies.clear()
+        enemies.add(Boss())
         background = Assets.getTexture(Levels.selected.background)
         internalFrame = 0
         blockInput = false
@@ -113,7 +116,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             batch.draw(gui_bg, 0f, HEIGHT - gui_bg.height)
             batch.draw(gui_bg2, WIDTH - gui_bg2.width, HEIGHT - gui_bg.height)
             buttons.forEach { button -> button.draw(batch) }
-            Fonts.fontItalic.draw(batch, scoreFormatter.format(score), 32f, HEIGHT - 54f)
+            Fonts.fontItalic.draw(batch, scoreFormatter.format(myScore), 32f, HEIGHT - 54f)
             Fonts.fontSmall.draw(batch, "SCORE", 32f, HEIGHT - 20f)
 
             Fonts.fontItalic.draw(batch, speedFormatter.format(player.speed * 30) + " km/h", WIDTH - gui_bg2.width + 96f, HEIGHT - 54f)
@@ -134,7 +137,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
     private fun updateEntities() {
         player.update()
-        score = score.add(BigDecimal.valueOf(player.speed.pow(2).toDouble()))
+        myScore = myScore.add(BigDecimal.valueOf(player.speed.pow(2).toDouble()))
 
         enemies.forEach {
             it.update()

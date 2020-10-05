@@ -1,12 +1,11 @@
 package com.yopox.ld47.entities
 
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.FloatArray
 import com.yopox.ld47.Assets
-import com.yopox.ld47.LD47
+import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.*
@@ -16,7 +15,7 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
     internal var radius = CENTER
     internal var leftOrbit = true
     internal var speed = 0f
-    internal var acceleration = 4f
+    internal var acceleration = Levels.selected.minSpeed
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true
@@ -58,13 +57,13 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
         }
 
         val Collision.invert: Collision
-        get() = when(this) {
-            Collision.NONE -> Collision.NONE
-            Collision.FRONT_FRONT -> Collision.FRONT_FRONT
-            Collision.FRONT_BACK -> Collision.BACK_FRONT
-            Collision.BACK_FRONT -> Collision.FRONT_BACK
-            Collision.BACK_BACK -> Collision.BACK_BACK
-        }
+            get() = when (this) {
+                Collision.NONE -> Collision.NONE
+                Collision.FRONT_FRONT -> Collision.FRONT_FRONT
+                Collision.FRONT_BACK -> Collision.BACK_FRONT
+                Collision.BACK_FRONT -> Collision.FRONT_BACK
+                Collision.BACK_BACK -> Collision.BACK_BACK
+            }
     }
 
     open fun update() {
@@ -229,7 +228,7 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
             Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().first) -> Collision.BACK_BACK
             Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().second) -> Collision.BACK_FRONT
             Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().first) -> Collision.FRONT_BACK
-            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().second) ->  Collision.FRONT_FRONT
+            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().second) -> Collision.FRONT_FRONT
             else -> Collision.NONE
         }
         return collision

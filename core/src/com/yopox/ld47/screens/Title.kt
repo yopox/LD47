@@ -32,7 +32,7 @@ class Title(game: LD47) : Screen(game) {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
-            fontTitle.drawCentered(batch, "STUCK IN A\nLOOP /////",
+            fontTitle.drawCentered(batch, "////// INFINITE //////////\n///////////// RACER //////",
                     Vector2(0f, HEIGHT / 3), Vector2(WIDTH, HEIGHT * 2 / 3))
             buttons.forEach { button -> button.draw(batch) }
         }

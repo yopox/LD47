@@ -3,18 +3,25 @@ package com.yopox.ld47.entities
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
+import kotlin.math.max
+import kotlin.math.min
 
 class Player : Orbital(Levels.selected.car) {
 
-    private var nitro = 100f
     var nitroCounter = 0f
-    private val NITRO_COST = 25f
-    private val BRAKE_COST = 10f
-    private val HIT_COST = 30f
+
+    private val NITRO_MAX = 100f
+    private var nitro = NITRO_MAX
+
+    private val NITRO_COST = 10f
+    private val BRAKE_COST = 5f
+    private val HIT_COST = 20f
+    private val NITRO_REFILL = 30f
 
     init {
         setOriginCenter()
         radius += 50f
+        setCircularPosition()
     }
 
     override fun update() {
@@ -31,11 +38,13 @@ class Player : Orbital(Levels.selected.car) {
             Companion.Collision.NONE -> Unit
             Companion.Collision.FRONT_FRONT -> triggerHit()
             Companion.Collision.FRONT_BACK -> {
-                triggerHit(); otherOrbital?.triggerHit()
+                otherOrbital?.triggerHit()
+                if (acceleration < ACCELERATION_STEP) triggerHit()
             }
             Companion.Collision.BACK_FRONT -> triggerHit()
             Companion.Collision.BACK_BACK -> {
-                triggerHit(); otherOrbital?.triggerHit()
+                otherOrbital?.triggerHit()
+                if (acceleration < ACCELERATION_STEP) triggerHit()
             }
         }
     }
@@ -43,11 +52,14 @@ class Player : Orbital(Levels.selected.car) {
     override fun triggerHit() {
         super.triggerHit()
         nitro -= HIT_COST
+        val speedLoss = speed / 2
+        speed -= speedLoss
+        acceleration += max(Levels.selected.minSpeed - speed, 0f)
         SoundManager.sfx(Resources.SFX_HIT)
     }
 
     fun nitro() {
-        if (acceleration < ACCELERATION_STEP) {
+        if (acceleration < ACCELERATION_STEP && nitro >= NITRO_COST) {
             nitro -= NITRO_COST
             acceleration = 1f
             SoundManager.sfx(Resources.SFX_NITRO)
@@ -59,6 +71,17 @@ class Player : Orbital(Levels.selected.car) {
             nitro -= BRAKE_COST
             acceleration = -0.5f
         }
+    }
+
+    fun collect(bonus: Bonus) {
+        SoundManager.sfx(Resources.SFX_SELECT)
+        when (bonus.type) {
+            Resources.MALUS -> acceleration -= 0.5f
+            Resources.BONUS_NITRO -> nitro = min(NITRO_MAX, nitro + NITRO_REFILL)
+            Resources.BONUS_BOOST -> acceleration += 0.5f
+            else -> Unit
+        }
+        bonus.toDestroy = true
     }
 
 }

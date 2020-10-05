@@ -1,7 +1,6 @@
 package com.yopox.ld47.entities
 
 import com.yopox.ld47.Levels
-import com.yopox.ld47.Resources
 import kotlin.math.PI
 
 class Boss : Orbital(Levels.selected.boss) {
@@ -16,6 +15,7 @@ class Boss : Orbital(Levels.selected.boss) {
         angle = PI
         speed = 2f
         rotation = (angle / PI * 180).toFloat() + rotationCorrection()
+        setCircularPosition()
     }
 
     override fun shouldCross(): Boolean = willCross

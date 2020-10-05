@@ -1,12 +1,11 @@
 package com.yopox.ld47.entities
 
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.FloatArray
 import com.yopox.ld47.Assets
-import com.yopox.ld47.LD47
+import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.*
@@ -16,10 +15,11 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
     internal var radius = CENTER
     internal var leftOrbit = true
     internal var speed = 0f
-    internal var acceleration = 4f
+    internal var acceleration = Levels.selected.minSpeed
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true
+    var toDestroy = false
 
     internal var hit = false
     internal var invulnerabilityFrames = 0
@@ -58,13 +58,13 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
         }
 
         val Collision.invert: Collision
-        get() = when(this) {
-            Collision.NONE -> Collision.NONE
-            Collision.FRONT_FRONT -> Collision.FRONT_FRONT
-            Collision.FRONT_BACK -> Collision.BACK_FRONT
-            Collision.BACK_FRONT -> Collision.FRONT_BACK
-            Collision.BACK_BACK -> Collision.BACK_BACK
-        }
+            get() = when (this) {
+                Collision.NONE -> Collision.NONE
+                Collision.FRONT_FRONT -> Collision.FRONT_FRONT
+                Collision.FRONT_BACK -> Collision.BACK_FRONT
+                Collision.BACK_FRONT -> Collision.FRONT_BACK
+                Collision.BACK_BACK -> Collision.BACK_BACK
+            }
     }
 
     open fun update() {
@@ -91,10 +91,7 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
                 angle += (if (forward) +1 else -1) * (if (leftOrbit) +1 else -1) * CENTER / radius * speed / 180 * PI
 
                 // Position update
-                val dx = radius * cos(angle).toFloat()
-                val dy = radius * sin(angle).toFloat()
-                val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
-                this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
+                setCircularPosition()
 
                 // Movement switching condition
                 linearAngle()?.let {
@@ -148,6 +145,13 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
             this.setAlpha(if ((invulnerabilityFrames / 5) % 2 == 0) 1f else 0f)
             if (invulnerabilityFrames == 0) hit = false
         }
+    }
+
+    internal fun setCircularPosition() {
+        val dx = radius * cos(angle).toFloat()
+        val dy = radius * sin(angle).toFloat()
+        val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
+        this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
     }
 
     open fun turn() {}
@@ -224,12 +228,12 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
     }
 
     internal fun collidesWith(o2: Orbital): Collision {
-        if (hit || o2.hit || Vector2(o2.orbitalX, o2.orbitalY).dst(orbitalX, orbitalY) >= max(o2.height, o2.width) + max(height, width)) return Collision.NONE
+        if ((o2 !is Bonus && hit || o2.hit) || Vector2(o2.orbitalX, o2.orbitalY).dst(orbitalX, orbitalY) >= max(o2.height, o2.width) + max(height, width)) return Collision.NONE
         val collision = when {
             Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().first) -> Collision.BACK_BACK
             Intersector.intersectPolygons(getCoordinates().first, o2.getCoordinates().second) -> Collision.BACK_FRONT
             Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().first) -> Collision.FRONT_BACK
-            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().second) ->  Collision.FRONT_FRONT
+            Intersector.intersectPolygons(getCoordinates().second, o2.getCoordinates().second) -> Collision.FRONT_FRONT
             else -> Collision.NONE
         }
         return collision

@@ -37,4 +37,9 @@ class LD47 : KtxGame<Screen>() {
         setScreen<Title>()
     }
 
+    override fun render() {
+        super.render()
+        SoundManager.update()
+    }
+
 }

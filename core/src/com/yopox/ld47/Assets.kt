@@ -34,7 +34,8 @@ enum class Resources {
     BONUS_BOOST,
     MALUS,
     GUI_BG,
-    GUI_BG2
+    GUI_BG2,
+    TITLE_BG
 }
 
 object Assets {
@@ -56,7 +57,8 @@ object Assets {
             Resources.BONUS_NITRO to "bonus/bonusN.png",
             Resources.MALUS to "bonus/malus.png",
             Resources.GUI_BG to "gui_bg.png",
-            Resources.GUI_BG2 to "gui_bg2.png"
+            Resources.GUI_BG2 to "gui_bg2.png",
+            Resources.TITLE_BG to "titlescreen/background.png"
     )
 
     val bgms = mapOf(

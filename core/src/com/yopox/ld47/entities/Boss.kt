@@ -7,11 +7,10 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Boss : Orbital(Levels.selected.enemy) {
+class Boss(var lives: Int = 3) : Orbital(Levels.selected.enemy) {
 
     var willCross = false
     var justUpdated = false
-    private var life = 1
 
     private data class Starting(val leftOrbit: Boolean, val angle: Double, val pos: Vector2)
 
@@ -46,7 +45,7 @@ class Boss : Orbital(Levels.selected.enemy) {
     override fun shouldCross(): Boolean = willCross
 
     override fun update() {
-        if (life > 0)
+        if (lives > 0)
             super.update()
         else {
             applyAcceleration()
@@ -71,9 +70,9 @@ class Boss : Orbital(Levels.selected.enemy) {
     }
 
     override fun hit(collision: Companion.Collision, otherOrbital: Orbital?) {
-        life -= 1
+        lives -= 1
         triggerHit()
-        if (life == 0) acceleration += 5f
+        if (lives == 0) acceleration += 5f
     }
 
 }

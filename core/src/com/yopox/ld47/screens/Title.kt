@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
@@ -13,6 +14,8 @@ import com.yopox.ld47.graphics.Fonts.fontTitle
 import ktx.graphics.use
 
 class Title(game: LD47) : Screen(game) {
+
+    val background = Assets.getTexture(Resources.TITLE_BG)
 
     init {
         buttons.add(
@@ -32,8 +35,7 @@ class Title(game: LD47) : Screen(game) {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
-            fontTitle.drawCentered(batch, "////// INFINITE //////////\n///////////// RACER //////",
-                    Vector2(0f, HEIGHT / 3), Vector2(WIDTH, HEIGHT * 2 / 3))
+            batch.draw(background, 0f, 0f)
             buttons.forEach { button -> button.draw(batch) }
         }
 

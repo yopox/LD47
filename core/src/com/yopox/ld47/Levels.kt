@@ -17,6 +17,7 @@ abstract class Level {
     abstract val background: Resources
     abstract val gameOver: Resources
     abstract val minSpeed: Float
+    abstract val tick: Int
 
     var high: String
         get() = Gdx.app.getPreferences(PREFS).getString(name)
@@ -38,6 +39,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND1
         override val gameOver: Resources = Resources.GAMEOVER1
         override val minSpeed: Float = 4f
+        override val tick: Int = 100
     }
 
     private val level2 = object : Level() {
@@ -49,6 +51,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND2
         override val gameOver: Resources = Resources.GAMEOVER2
         override val minSpeed: Float = 5f
+        override val tick: Int = 75
     }
 
     private val level3 = object : Level() {
@@ -60,6 +63,7 @@ object Levels {
         override val background: Resources = Resources.BACKGROUND3
         override val gameOver: Resources = Resources.GAMEOVER3
         override val minSpeed: Float = 7f
+        override val tick: Int = 50
     }
 
     val levels = arrayOf(level1, level2, level3)

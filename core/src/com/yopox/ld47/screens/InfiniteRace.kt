@@ -122,7 +122,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private fun updateSequencer() {
         internalFrame += 1
 
-        if (internalFrame % 120 == 0) {
+        if (internalFrame % Levels.selected.tick == 0) {
             // Spawn a bonus
             if (LD47.random.nextFloat() <= BONUS_PROBABILITY && bonuses.size < 2) bonuses.add(Bonus())
 
@@ -138,7 +138,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 sequencerState = SequencerState.BOSS
             }
             internalFrame = 0
-            enemies.add(Boss())
+            enemies.add(Boss(if (sequencerState == SequencerState.BOSS_ALT) 5 else 3))
             SoundManager.stop()
             SoundManager.sfx(Resources.SFX_BOSS)
         }
@@ -185,7 +185,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             buttons.forEach { button -> button.drawBorder(renderer) }
 
             renderer.color = Color.CYAN
-            renderer.rect(0f, HEIGHT - gui_bg.height - 4f, player.nitroCounter * 4, 4f)
+            renderer.rect(0f, HEIGHT - gui_bg.height - 3f, player.nitroCounter * 4, 6f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
@@ -264,7 +264,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
             }
             ' ' -> player.nitro()
             'x' -> player.brake()
-            'r' -> reset()
         }
         return true
     }

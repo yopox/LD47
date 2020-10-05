@@ -14,13 +14,20 @@ import com.yopox.ld47.entities.Boss
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
+import com.yopox.ld47.graphics.Fonts
 import ktx.graphics.use
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import kotlin.math.PI
 
 class Main(game: LD47) : Screen(game) {
 
     private val player = Player()
     private val boss = Boss()
     private val background = LD47.assetManager.get(Assets.sprites[Resources.BACKGROUND], Texture::class.java)
+    private val gui_bg = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG], Texture::class.java)
+    private var score = BigDecimal.ZERO
+    private val decimalFormat = DecimalFormat("000000000")
 
     override fun reset() {}
 
@@ -34,6 +41,7 @@ class Main(game: LD47) : Screen(game) {
 
         player.update()
         boss.update()
+        score = score.add(BigDecimal.valueOf(player.speed.toDouble()))
 
         val collision = player.collidesWith(boss)
         if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, boss)
@@ -46,8 +54,11 @@ class Main(game: LD47) : Screen(game) {
             player.draw(batch)
             boss.draw(batch)
 
-            // Buttons
+            // GUI
+            batch.draw(gui_bg, 0f, HEIGHT - gui_bg.height)
             buttons.forEach { button -> button.draw(batch) }
+            Fonts.fontItalic.draw(batch, decimalFormat.format(score), 32f, HEIGHT - 51f)
+            Fonts.fontSmall.draw(batch, "Score", 32f, HEIGHT - 23f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->

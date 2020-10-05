@@ -21,7 +21,7 @@ class Bonus(val type: Resources = kinds.random()): Orbital(type) {
 
     override fun update() {
         tick += 1
-        if (tick == 1000) toDestroy = true
+        if (tick == 500) toDestroy = true
     }
 
 }

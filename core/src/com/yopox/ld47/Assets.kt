@@ -8,7 +8,8 @@ enum class Resources {
     CAR3,
     CAR4,
     BACKGROUND,
-    GUI_BG
+    GUI_BG,
+    GUI_BG2
 }
 
 object Assets {
@@ -19,7 +20,8 @@ object Assets {
             Resources.CAR3 to "sprites/car3.png",
             Resources.CAR4 to "sprites/car4.png",
             Resources.BACKGROUND to "circuit/global2.png",
-            Resources.GUI_BG to "gui_bg.png"
+            Resources.GUI_BG to "gui_bg.png",
+            Resources.GUI_BG2 to "gui_bg2.png"
     )
 
     val sounds = mapOf(

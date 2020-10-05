@@ -30,8 +30,10 @@ class Main(game: LD47) : Screen(game) {
     private var enemies = arrayListOf<Orbital>()
     private val background = LD47.assetManager.get(Assets.sprites[Resources.BACKGROUND], Texture::class.java)
     private val gui_bg = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG], Texture::class.java)
+    private val gui_bg2 = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG2], Texture::class.java)
     private var score = BigDecimal.ZERO
-    private val decimalFormat = DecimalFormat("000000000")
+    private val scoreFormatter = DecimalFormat("000000000")
+    private val speedFormatter = DecimalFormat("000")
     private var state = State.INFINITE
 
     override fun reset() {
@@ -78,9 +80,13 @@ class Main(game: LD47) : Screen(game) {
 
             // GUI
             batch.draw(gui_bg, 0f, HEIGHT - gui_bg.height)
+            batch.draw(gui_bg2, WIDTH - gui_bg2.width, HEIGHT - gui_bg.height)
             buttons.forEach { button -> button.draw(batch) }
-            Fonts.fontItalic.draw(batch, decimalFormat.format(score), 32f, HEIGHT - 51f)
-            Fonts.fontSmall.draw(batch, "Score", 32f, HEIGHT - 23f)
+            Fonts.fontItalic.draw(batch, scoreFormatter.format(score), 32f, HEIGHT - 54f)
+            Fonts.fontSmall.draw(batch, "SCORE", 32f, HEIGHT - 20f)
+
+            Fonts.fontItalic.draw(batch, speedFormatter.format(player.speed * 30) + " km/h", WIDTH - gui_bg2.width + 96f, HEIGHT - 54f)
+            Fonts.fontSmall.draw(batch, "SPEED", WIDTH - gui_bg2.width + 188f, HEIGHT - 20f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->

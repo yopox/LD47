@@ -43,8 +43,8 @@ class LevelSelection(game: LD47) : Screen(game) {
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
             renderer.color = Color.BLACK
-            renderer.rect(128f, HEIGHT - 64f, 64f * 9, -64f * 2)
-            renderer.rect(128f, HEIGHT - 64f * 4, 64f * 10, -64f * 6)
+            renderer.rect(128f, HEIGHT - 64f, 64f * 14, -64f * 2)
+            renderer.rect(128f, HEIGHT - 64f * 4, 64f * 11, -64f * 6)
             renderer.rect(WIDTH - 128f, HEIGHT - 64f * 4.5f, -64f * 4, -64f * 5)
 
             buttons.forEach { it.drawBorder(renderer) }

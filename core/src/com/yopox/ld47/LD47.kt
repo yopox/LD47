@@ -34,7 +34,7 @@ class LD47 : KtxGame<Screen>() {
         addScreen(LevelSelection(this))
         addScreen(InfiniteRace(this))
         addScreen(GameOver(this))
-        setScreen<InfiniteRace>()
+        setScreen<Title>()
     }
 
     override fun render() {

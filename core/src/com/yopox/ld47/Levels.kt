@@ -30,9 +30,9 @@ abstract class Level {
 
 object Levels {
     private val level1 = object : Level() {
-        override val name: String = "Level One"
-        override val carName: String = "SUPER CAR"
-        override val description: String = "This level is super.\nLine 2 is super too!\nLine 3 is okay..."
+        override val name: String = "P. Pastis Circuit"
+        override val carName: String = "LANCIO DELTO FH"
+        override val description: String = "Famous red and blue\ncircuit located in south\nFrance near Le Castellet."
         override val car: Resources = Resources.CAR1
         override val enemy: Resources = Resources.CAR2
         override val background: Resources = Resources.BACKGROUND1
@@ -41,17 +41,28 @@ object Levels {
     }
 
     private val level2 = object : Level() {
-        override val name: String = "Level Two"
-        override val carName: String = "ALSO SUPER CAR"
-        override val description: String = "This level more super.\nLine 2 is more super too!\nLine 3 is still okay..."
+        override val name: String = "Autodromo Ferraro"
+        override val carName: String = "FERRARO 40F"
+        override val description: String = "Remarkable circuit located\nin Bologna where you can\nsee lots of red Ferraros."
         override val car: Resources = Resources.CAR3
         override val enemy: Resources = Resources.CAR4
         override val background: Resources = Resources.BACKGROUND2
         override val gameOver: Resources = Resources.GAMEOVER2
-        override val minSpeed: Float = 5.5f
+        override val minSpeed: Float = 5f
     }
 
-    val levels = arrayOf(level1, level2)
+    private val level3 = object : Level() {
+        override val name: String = "Woodgood Circuit"
+        override val carName: String = "PUMA KX"
+        override val description: String = "Great circuit near\nwest Sussex known for\nit's oldtimer racers."
+        override val car: Resources = Resources.CAR5
+        override val enemy: Resources = Resources.CAR6
+        override val background: Resources = Resources.BACKGROUND3
+        override val gameOver: Resources = Resources.GAMEOVER3
+        override val minSpeed: Float = 7f
+    }
+
+    val levels = arrayOf(level1, level2, level3)
 
     val selected: Level
         get() = levels[LevelSelection.selected]

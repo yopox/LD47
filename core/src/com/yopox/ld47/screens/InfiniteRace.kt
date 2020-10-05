@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.yopox.ld47.*
+import com.yopox.ld47.entities.Bonus
 import com.yopox.ld47.entities.Boss
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
@@ -24,6 +25,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
     private var player = Player()
     private var enemies = arrayListOf<Orbital>()
+    private var bonuses = arrayListOf<Bonus>()
     private var background = Assets.getTexture(Levels.levels[LevelSelection.selected].background)
     private val gui_bg = Assets.getTexture(Resources.GUI_BG)
     private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
@@ -43,7 +45,9 @@ class InfiniteRace(game: LD47) : Screen(game) {
         myScore = BigDecimal.ZERO
         player = Player()
         enemies.clear()
+        bonuses.clear()
         enemies.add(Boss())
+        bonuses.add(Bonus())
         background = Assets.getTexture(Levels.selected.background)
         internalFrame = 0
         blockInput = false
@@ -109,6 +113,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             batch.draw(background, 0f, 0f)
 
             // Sprites
+            bonuses.forEach { it.draw(batch) }
             player.draw(batch)
             enemies.forEach { it.draw(batch) }
 
@@ -144,6 +149,12 @@ class InfiniteRace(game: LD47) : Screen(game) {
             val collision = player.collidesWith(it)
             if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, it)
         }
+
+        bonuses.forEach {
+            val collision = player.collidesWith(it)
+            if (collision != Orbital.Companion.Collision.NONE) player.collect(it)
+        }
+        bonuses.filter { it.toDestroy }.forEach { bonuses.remove(it) }
     }
 
     override fun keyDown(keycode: Int): Boolean {

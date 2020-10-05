@@ -3,26 +3,25 @@ package com.yopox.ld47.entities
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
-import kotlin.math.cos
 import kotlin.math.max
-import kotlin.math.sin
+import kotlin.math.min
 
 class Player : Orbital(Levels.selected.car) {
 
-    private var nitro = 100f
     var nitroCounter = 0f
+
+    private val NITRO_MAX = 100f
+    private var nitro = NITRO_MAX
+
     private val NITRO_COST = 10f
     private val BRAKE_COST = 5f
     private val HIT_COST = 20f
+    private val NITRO_REFILL = 30f
 
     init {
         setOriginCenter()
         radius += 50f
-
-        val dx = radius * cos(angle).toFloat()
-        val dy = radius * sin(angle).toFloat()
-        val origin = if (leftOrbit) LEFT_FOCAL else RIGHT_FOCAL
-        this.setPosition(origin.x + dx - width / 2, origin.y + dy - height / 2)
+        setCircularPosition()
     }
 
     override fun update() {
@@ -72,6 +71,17 @@ class Player : Orbital(Levels.selected.car) {
             nitro -= BRAKE_COST
             acceleration = -0.5f
         }
+    }
+
+    fun collect(bonus: Bonus) {
+        SoundManager.sfx(Resources.SFX_SELECT)
+        when (bonus.type) {
+            Resources.MALUS -> acceleration -= 0.5f
+            Resources.BONUS_NITRO -> nitro = min(NITRO_MAX, nitro + NITRO_REFILL)
+            Resources.BONUS_BOOST -> acceleration += 0.5f
+            else -> Unit
+        }
+        bonus.toDestroy = true
     }
 
 }

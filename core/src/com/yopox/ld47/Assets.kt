@@ -29,6 +29,9 @@ enum class Resources {
     BACKGROUND2,
     GAMEOVER2,
     BACKGROUND3,
+    BONUS_NITRO,
+    BONUS_BOOST,
+    MALUS,
     GUI_BG,
     GUI_BG2
 }
@@ -46,6 +49,9 @@ object Assets {
             Resources.GAMEOVER1 to "gameover/gameover1.png",
             Resources.BACKGROUND2 to "circuit/global2.png",
             Resources.GAMEOVER2 to "gameover/gameover2.png",
+            Resources.BONUS_BOOST to "bonus/bonusB.png",
+            Resources.BONUS_NITRO to "bonus/bonusN.png",
+            Resources.MALUS to "bonus/malus.png",
             Resources.GUI_BG to "gui_bg.png",
             Resources.GUI_BG2 to "gui_bg2.png"
     )

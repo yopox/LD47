@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.graphics.Fonts
+import com.yopox.ld47.screens.GameOver
 import com.yopox.ld47.screens.LevelSelection
 import com.yopox.ld47.screens.InfiniteRace
 import com.yopox.ld47.screens.Title
@@ -32,6 +33,7 @@ class LD47 : KtxGame<Screen>() {
         addScreen(Title(this))
         addScreen(LevelSelection(this))
         addScreen(InfiniteRace(this))
+        addScreen(GameOver(this))
         setScreen<Title>()
     }
 

@@ -1,8 +1,13 @@
 package com.yopox.ld47
 
+import com.badlogic.gdx.Gdx
 import com.yopox.ld47.screens.LevelSelection
 
 abstract class Level {
+
+    companion object {
+        const val PREFS = "scores"
+    }
 
     abstract val name: String
     abstract val carName: String
@@ -10,6 +15,14 @@ abstract class Level {
     abstract val car: Resources
     abstract val boss: Resources
     abstract val background: Resources
+
+    var high: String
+        get() = Gdx.app.getPreferences(PREFS).getString(name)
+        set(value) {
+            val prefs = Gdx.app.getPreferences(PREFS)
+            prefs.putString(name, value)
+            prefs.flush()
+        }
 
 }
 

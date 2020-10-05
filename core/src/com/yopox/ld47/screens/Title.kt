@@ -1,10 +1,9 @@
 package com.yopox.ld47.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
@@ -30,7 +29,7 @@ class Title(game: LD47) : Screen(game) {
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0.25f, 0.2f, 0.3f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
             fontTitle.drawCentered(batch, "STUCK IN A\nLOOP /////",

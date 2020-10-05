@@ -15,8 +15,8 @@ open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) 
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true
-    internal var speed = 3f
-    internal var acceleration = 1f
+    internal var speed = 0f
+    internal var acceleration = 4f
     private var movement = Movement.CIRCULAR
     private var linearAngle = 0.0
     internal var forward = true

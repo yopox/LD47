@@ -3,9 +3,10 @@ package com.yopox.ld47.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.yopox.ld47.*
+import com.yopox.ld47.entities.Boss
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
@@ -26,10 +27,15 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private var background = Assets.getTexture(Levels.levels[LevelSelection.selected].background)
     private val gui_bg = Assets.getTexture(Resources.GUI_BG)
     private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
-    private var score = BigDecimal.ZERO
-    private val scoreFormatter = DecimalFormat("000000000")
-    private val speedFormatter = DecimalFormat("000")
     private var state = State.INFINITE
+    private var gameOverFrame = 0
+
+    companion object {
+        val scoreFormatter = DecimalFormat("000000000")
+        val speedFormatter = DecimalFormat("000")
+        var score = BigDecimal.ZERO
+            get() = field
+    }
 
     override fun reset() {
         state = State.INFINITE
@@ -37,6 +43,8 @@ class InfiniteRace(game: LD47) : Screen(game) {
         player = Player()
         enemies.clear()
         background = Assets.getTexture(Levels.selected.background)
+        gameOverFrame = 0
+        blockInput = false
         SoundManager.play(Resources.OST_LEVEL)
     }
 
@@ -46,7 +54,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
     }
 
     override fun render(delta: Float) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         when (state) {
             State.INFINITE -> {
@@ -58,14 +65,26 @@ class InfiniteRace(game: LD47) : Screen(game) {
             }
             State.GAME_OVER -> {
                 drawGame()
+                gameOverFrame += 1
+                Gdx.gl.glEnable(GL30.GL_BLEND)
+                Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA)
+                shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
+                    renderer.color = Color(0f, 0f, 0f, 0.006f * gameOverFrame)
+                    renderer.rect(0f, 0f, WIDTH, HEIGHT)
+                }
+                Gdx.gl.glDisable(GL30.GL_BLEND)
+
+                if (0.004f * gameOverFrame > 0.98) {
+                    game.setScreen<GameOver>()
+                }
             }
         }
 
         // Game Over
         if (player.nitroCounter < 0 && state == State.INFINITE) {
             state = State.GAME_OVER
+            blockInput = true
             SoundManager.sfx(Resources.SFX_GAME_OVER)
-            SoundManager.play(Resources.OST_GAME_OVER)
         }
     }
 
@@ -86,7 +105,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             Fonts.fontSmall.draw(batch, "SCORE", 32f, HEIGHT - 20f)
 
             Fonts.fontItalic.draw(batch, speedFormatter.format(player.speed * 30) + " km/h", WIDTH - gui_bg2.width + 96f, HEIGHT - 54f)
-                    Fonts . fontSmall . draw (batch, "SPEED", WIDTH - gui_bg2.width + 188f, HEIGHT - 20f)
+            Fonts.fontSmall.draw(batch, "SPEED", WIDTH - gui_bg2.width + 188f, HEIGHT - 20f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
@@ -98,12 +117,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
             renderer.color = Color.CYAN
-/*          renderer.polygon(player.getCoordinates().first.toArray())
-            renderer.polygon(player.getCoordinates().second.toArray())
-            enemies.forEach {
-                renderer.polygon(it.getCoordinates().first.toArray())
-                renderer.polygon(it.getCoordinates().second.toArray())
-            }*/
         }
     }
 
@@ -152,7 +165,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             }
             ' ' -> player.nitro()
             'x' -> player.brake()
-            'r' -> reset()
+//            'r' -> reset()
         }
         return true
     }

@@ -18,7 +18,7 @@ class Title(game: LD47) : Screen(game) {
     init {
         buttons.add(
                 Button("START", Vector2(WIDTH / 2, HEIGHT / 4)) {
-                    game.setScreen<Main>()
+                    game.setScreen<LevelSelection>()
                 }
         )
     }

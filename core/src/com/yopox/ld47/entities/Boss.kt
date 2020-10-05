@@ -1,9 +1,10 @@
 package com.yopox.ld47.entities
 
+import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import kotlin.math.PI
 
-class Boss : Orbital(Resources.CAR2) {
+class Boss : Orbital(Levels.selected.boss) {
 
     var willCross = false
     var justUpdated = false

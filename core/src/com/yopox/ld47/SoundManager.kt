@@ -26,6 +26,10 @@ object SoundManager {
 
     fun sfx(key: Resources) {
         val path = Assets.sfxs[key] ?: return
+        sfx?.let {
+            it.stop()
+            it.dispose()
+        }
         sfx = LD47.assetManager.get(path, Music::class.java).also {
             it.play()
             it.volume = if (mute) 0f else SFX_LEVEL

@@ -11,7 +11,7 @@ import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.*
 
-open class Orbital(textureID: Resources) : Sprite(LD47.assetManager.get(Assets.sprites[textureID], Texture::class.java)) {
+open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) {
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true

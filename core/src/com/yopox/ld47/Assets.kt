@@ -1,5 +1,7 @@
 package com.yopox.ld47
 
+import com.badlogic.gdx.graphics.Texture
+
 enum class Resources {
     OST_TITLE,
     OST_GAME_OVER,
@@ -20,7 +22,11 @@ enum class Resources {
     CAR2,
     CAR3,
     CAR4,
-    BACKGROUND,
+    CAR5,
+    CAR6,
+    BACKGROUND1,
+    BACKGROUND2,
+    BACKGROUND3,
     GUI_BG,
     GUI_BG2
 }
@@ -28,11 +34,14 @@ enum class Resources {
 object Assets {
 
     val sprites = mapOf(
-            Resources.CAR1 to "sprites/car3.png",
-            Resources.CAR2 to "sprites/car4.png",
+            Resources.CAR1 to "sprites/car1.png",
+            Resources.CAR2 to "sprites/car2.png",
             Resources.CAR3 to "sprites/car3.png",
             Resources.CAR4 to "sprites/car4.png",
-            Resources.BACKGROUND to "circuit/global2.png",
+            Resources.CAR5 to "sprites/car5.png",
+            Resources.CAR6 to "sprites/car6.png",
+            Resources.BACKGROUND1 to "circuit/global1.png",
+            Resources.BACKGROUND2 to "circuit/global2.png",
             Resources.GUI_BG to "gui_bg.png",
             Resources.GUI_BG2 to "gui_bg2.png"
     )
@@ -57,5 +66,7 @@ object Assets {
             Resources.SFX_PAUSE to "sfx/pause.ogg",
             Resources.SFX_UNPAUSE to "sfx/unpause.ogg"
     )
+
+    fun getTexture(resource: Resources): Texture = LD47.assetManager.get(sprites[resource], Texture::class.java)
 
 }

@@ -17,7 +17,7 @@ import ktx.math.minus
 class Button(val text: String, val pos: Vector2, val callback: () -> Unit) {
 
     companion object {
-        private val SIZE = Vector2(256f, 96f)
+        private val SIZE = Vector2(192f, 80f)
         const val WIDTH = 2f
     }
 

@@ -1,9 +1,10 @@
 package com.yopox.ld47.entities
 
+import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
 
-class Player : Orbital(Resources.CAR1) {
+class Player : Orbital(Levels.selected.car) {
 
     private var nitro = 100f
     var nitroCounter = 0f

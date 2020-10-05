@@ -4,13 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.yopox.ld47.Assets
-import com.yopox.ld47.LD47
-import com.yopox.ld47.Resources
-import com.yopox.ld47.SoundManager
-import com.yopox.ld47.entities.Boss
+import com.yopox.ld47.*
 import com.yopox.ld47.entities.Orbital
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.entities.Player
@@ -20,7 +15,7 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 import kotlin.math.pow
 
-class Main(game: LD47) : Screen(game) {
+class InfiniteRace(game: LD47) : Screen(game) {
 
     enum class State {
         INFINITE, PAUSE, GAME_OVER
@@ -28,9 +23,9 @@ class Main(game: LD47) : Screen(game) {
 
     private var player = Player()
     private var enemies = arrayListOf<Orbital>()
-    private val background = LD47.assetManager.get(Assets.sprites[Resources.BACKGROUND], Texture::class.java)
-    private val gui_bg = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG], Texture::class.java)
-    private val gui_bg2 = LD47.assetManager.get(Assets.sprites[Resources.GUI_BG2], Texture::class.java)
+    private var background = Assets.getTexture(Levels.levels[LevelSelection.selected].background)
+    private val gui_bg = Assets.getTexture(Resources.GUI_BG)
+    private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
     private var score = BigDecimal.ZERO
     private val scoreFormatter = DecimalFormat("000000000")
     private val speedFormatter = DecimalFormat("000")
@@ -41,6 +36,7 @@ class Main(game: LD47) : Screen(game) {
         score = BigDecimal.ZERO
         player = Player()
         enemies.clear()
+        background = Assets.getTexture(Levels.selected.background)
         SoundManager.play(Resources.OST_LEVEL)
     }
 
@@ -90,7 +86,7 @@ class Main(game: LD47) : Screen(game) {
             Fonts.fontSmall.draw(batch, "SCORE", 32f, HEIGHT - 20f)
 
             Fonts.fontItalic.draw(batch, speedFormatter.format(player.speed * 30) + " km/h", WIDTH - gui_bg2.width + 96f, HEIGHT - 54f)
-            Fonts.fontSmall.draw(batch, "SPEED", WIDTH - gui_bg2.width + 188f, HEIGHT - 20f)
+                    Fonts . fontSmall . draw (batch, "SPEED", WIDTH - gui_bg2.width + 188f, HEIGHT - 20f)
         }
 
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->

@@ -13,56 +13,67 @@ import ktx.math.minus
 /**
  * Represents a text button in the UI.
  * [pos] are the coordinates of the center of the button.
+ * [callback] called on button release.
  */
-class Button(val text: String, val pos: Vector2, val callback: () -> Unit) {
+abstract class Button(val text: String, val pos: Vector2, val size: Vector2) {
 
     companion object {
-        private val SIZE = Vector2(192f, 80f)
         const val WIDTH = 2f
     }
 
-    private var selected = false
-    private val origin = pos - SIZE / 2
+    private var hovered = false
+    private val origin = pos - size / 2
     private var clicked = false
 
     val glyphLayout = GlyphLayout().apply {
         setText(Fonts.font, text)
     }
 
-    fun contains(x: Float, y: Float) = x > pos.x - SIZE.x / 2
-            && x < pos.x + SIZE.x / 2
-            && y > pos.y - SIZE.y / 2
-            && y < pos.y + SIZE.y / 2
+    fun contains(x: Float, y: Float) = x > pos.x - size.x / 2
+            && x < pos.x + size.x / 2
+            && y > pos.y - size.y / 2
+            && y < pos.y + size.y / 2
 
-    fun updateSelected(mouseX: Float, mouseY: Float) {
-        selected = contains(mouseX, mouseY)
+    fun hover(mouseX: Float, mouseY: Float) {
+        hovered = contains(mouseX, mouseY)
     }
 
     fun click(mouseX: Float, mouseY: Float) {
-        if (contains(mouseX, mouseY)) clicked = true
+        clicked = contains(mouseX, mouseY)
+        if (clicked) down()
     }
+
+    abstract fun down()
 
     fun release(mouseX: Float, mouseY: Float) {
         if (clicked && contains(mouseX, mouseY)) {
             clicked = false
-            callback()
-            SoundManager.sfx(Resources.SFX_BUTTON)
+            release()
+        } else {
+            clicked = false
         }
     }
 
+    abstract fun release()
+
     fun draw(batch: Batch) {
-        val font = if (selected) Fonts.fontItalic else Fonts.font
+        val font = if (hovered) Fonts.fontItalic else Fonts.font
         font.draw(batch, text, pos.x - glyphLayout.width / 2, pos.y + glyphLayout.height / 2)
     }
 
     fun drawBorder(shapeRenderer: ShapeRenderer) {
-        if (selected) {
+        if (hovered || clicked) {
             if (clicked) shapeRenderer.color = Color.CORAL
-            shapeRenderer.rect(origin.x, origin.y, SIZE.x, WIDTH)
-            shapeRenderer.rect(origin.x, origin.y, WIDTH, SIZE.y)
-            shapeRenderer.rect(origin.x + SIZE.x - WIDTH, origin.y, WIDTH, SIZE.y)
-            shapeRenderer.rect(origin.x, origin.y + SIZE.y - WIDTH, SIZE.x, WIDTH)
+            shapeRenderer.rect(origin.x, origin.y, size.x, WIDTH)
+            shapeRenderer.rect(origin.x, origin.y, WIDTH, size.y)
+            shapeRenderer.rect(origin.x + size.x - WIDTH, origin.y, WIDTH, size.y)
+            shapeRenderer.rect(origin.x, origin.y + size.y - WIDTH, size.x, WIDTH)
         }
+    }
+
+    fun drawBackground(shapeRenderer: ShapeRenderer) {
+        shapeRenderer.color = if (clicked) Color.DARK_GRAY else Color.BLACK
+        shapeRenderer.rect(origin.x , origin.y, size.x, size.y)
     }
 
 }

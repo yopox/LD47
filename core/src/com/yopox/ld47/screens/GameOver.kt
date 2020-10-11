@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.*
-import com.yopox.ld47.graphics.Button
 import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.graphics.Fonts.drawCentered
+import com.yopox.ld47.graphics.MenuButton
 import ktx.graphics.use
 
 class GameOver(game: LD47) : Screen(game) {
@@ -25,7 +25,7 @@ class GameOver(game: LD47) : Screen(game) {
     private var gameOver: Texture? = null
 
     init {
-        buttons.add(Button("TITLE", Vector2(WIDTH / 2, HEIGHT / 5)) { game.setScreen<Title>() })
+        buttons.add(MenuButton("TITLE", Vector2(WIDTH / 2, HEIGHT / 5)) { game.setScreen<Title>() })
     }
 
     override fun show() {

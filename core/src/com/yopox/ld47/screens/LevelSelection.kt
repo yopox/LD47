@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.*
-import com.yopox.ld47.graphics.Button
 import com.yopox.ld47.graphics.Fonts
+import com.yopox.ld47.graphics.MenuButton
 import ktx.graphics.use
 
 class LevelSelection(game: LD47) : Screen(game) {
@@ -19,9 +19,9 @@ class LevelSelection(game: LD47) : Screen(game) {
     private var car = Assets.getTexture(Levels.selected.car)
 
     init {
-        buttons.add(Button("NEXT", Vector2(WIDTH - 256f, HEIGHT - 64f * 6 + 20f)) { next() })
-        buttons.add(Button("PREVIOUS", Vector2(WIDTH - 256f, HEIGHT - 64f * 7)) { previous() })
-        buttons.add(Button("SELECT", Vector2(WIDTH - 256f, HEIGHT - 64f * 8 - 20f)) { game.setScreen<InfiniteRace>() })
+        buttons.add(MenuButton("NEXT", Vector2(WIDTH - 256f, HEIGHT - 64f * 6 + 20f)) { next() })
+        buttons.add(MenuButton("PREVIOUS", Vector2(WIDTH - 256f, HEIGHT - 64f * 7)) { previous() })
+        buttons.add(MenuButton("SELECT", Vector2(WIDTH - 256f, HEIGHT - 64f * 8 - 20f)) { game.setScreen<InfiniteRace>() })
     }
 
     override fun reset() {}

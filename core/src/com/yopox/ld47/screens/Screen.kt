@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.yopox.ld47.LD47
 import com.yopox.ld47.graphics.Button
 import ktx.app.KtxScreen
@@ -31,8 +32,8 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
 
         internal var blockInput = false
 
-        private fun unproject(camera: Camera, screenX: Int, screenY: Int): Vector2 {
-            val pos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
+        private fun unproject(viewport: Viewport, screenX: Int, screenY: Int): Vector2 {
+            val pos = viewport.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
             return Vector2(pos.x, pos.y)
         }
     }
@@ -71,15 +72,15 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (pointer > 0 || button > 0 || blockInput) return false
-        val (x, y) = unproject(camera, screenX, screenY)
+        if (blockInput) return false
+        val (x, y) = unproject(viewport, screenX, screenY)
         inputDown(x, y)
         return true
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (pointer > 0 || button > 0 || blockInput) return false
-        val (x, y) = unproject(camera, screenX, screenY)
+        if (blockInput) return false
+        val (x, y) = unproject(viewport, screenX, screenY)
         inputUp(x, y)
         return true
     }
@@ -91,8 +92,8 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
 
     override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
     override fun mouseMoved(screenX: Int, screenY: Int): Boolean {
-        val (x, y) = unproject(camera, screenX, screenY)
-        buttons.forEach { it.updateSelected(x, y) }
+        val (x, y) = unproject(viewport, screenX, screenY)
+        buttons.forEach { it.hover(x, y) }
         return true
     }
 

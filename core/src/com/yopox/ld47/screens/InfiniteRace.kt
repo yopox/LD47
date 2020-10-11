@@ -1,14 +1,17 @@
 package com.yopox.ld47.screens
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.*
 import com.yopox.ld47.entities.*
 import com.yopox.ld47.entities.Orbital.Companion.Facing.*
 import com.yopox.ld47.graphics.Fonts
+import com.yopox.ld47.graphics.PadButton
 import ktx.graphics.use
 import java.math.BigDecimal
 import java.text.DecimalFormat
@@ -25,10 +28,10 @@ class InfiniteRace(game: LD47) : Screen(game) {
     }
 
     val SequencerState.isBoss: Boolean
-    get() = when (this) {
-        SequencerState.NORMAL, SequencerState.NORMAL_ALT -> false
-        else -> true
-    }
+        get() = when (this) {
+            SequencerState.NORMAL, SequencerState.NORMAL_ALT -> false
+            else -> true
+        }
 
     private var player = Player()
     private var enemies = arrayListOf<Orbital>()
@@ -39,6 +42,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private var state = State.COUNT
     private var internalFrame = 0
     private var sequencerState = SequencerState.NORMAL
+    private var initButtons = false
 
     companion object {
         val scoreFormatter = DecimalFormat("000000000")
@@ -67,6 +71,17 @@ class InfiniteRace(game: LD47) : Screen(game) {
     override fun show() {
         super.show()
         reset()
+        if (!initButtons) {
+            if (Gdx.app.type == Application.ApplicationType.Android) {
+                //val dx = viewport.leftGutterWidth
+                val dx = 0
+                buttons.add(PadButton("<-", Vector2(PadButton.SIZE - dx, PadButton.SIZE), { player.facing = LEFT }, { player.facing = FRONT }))
+                buttons.add(PadButton("->", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE), { player.facing = RIGHT }, { player.facing = FRONT }))
+                buttons.add(PadButton("NITRO", Vector2(PadButton.SIZE - dx, PadButton.SIZE * 2.5f), {}, { player.nitro() }))
+                buttons.add(PadButton("BRAKE", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE * 2.5f), {}, { player.brake() }))
+            }
+            initButtons = true
+        }
     }
 
     override fun render(delta: Float) {
@@ -82,7 +97,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 drawGame()
                 internalFrame += 1
                 when (internalFrame) {
-                    16 ->  SoundManager.sfx(Resources.SFX_321)
+                    16 -> SoundManager.sfx(Resources.SFX_321)
                     170 -> {
                         state = State.INFINITE
                         SoundManager.play(Resources.OST_LEVEL)
@@ -171,6 +186,14 @@ class InfiniteRace(game: LD47) : Screen(game) {
             player.draw(batch)
             enemies.forEach { it.draw(batch) }
 
+        }
+
+        shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
+            buttons.forEach { button -> button.drawBackground(renderer) }
+        }
+
+        batch.use { batch ->
+
             // GUI
             batch.draw(gui_bg, 0f, HEIGHT - gui_bg.height)
             batch.draw(gui_bg2, WIDTH - gui_bg2.width, HEIGHT - gui_bg.height)
@@ -187,10 +210,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
             renderer.color = Color.CYAN
             renderer.rect(0f, HEIGHT - gui_bg.height - 3f, player.nitroCounter * 4, 6f)
-        }
-
-        shapeRenderer.use(ShapeRenderer.ShapeType.Line) { renderer ->
-            renderer.color = Color.CYAN
         }
     }
 

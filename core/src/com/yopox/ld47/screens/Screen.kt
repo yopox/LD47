@@ -3,6 +3,7 @@ package com.yopox.ld47.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
@@ -37,6 +38,7 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
     }
 
     override fun show() {
+        super.show()
         Gdx.input.inputProcessor = this
     }
 
@@ -46,9 +48,16 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
     }
 
     override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        viewport.update(width, height, true)
         camera.update()
-        camera.position.set(WIDTH / 2, HEIGHT / 2, 0f)
+    }
+
+    override fun render(delta: Float) {
+        batch.projectionMatrix = camera.combined
+        shapeRenderer.projectionMatrix = camera.combined
+
+        Gdx.gl.glClearColor(227f / 255, 227f / 255, 227f / 255, 1f)
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
     }
 
     abstract fun reset()

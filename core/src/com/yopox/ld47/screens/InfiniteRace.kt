@@ -70,6 +70,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
     }
 
     override fun render(delta: Float) {
+        super.render(delta)
 
         when (state) {
             State.INFINITE -> {

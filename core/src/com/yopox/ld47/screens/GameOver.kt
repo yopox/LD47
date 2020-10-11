@@ -48,6 +48,8 @@ class GameOver(game: LD47) : Screen(game) {
     }
 
     override fun render(delta: Float) {
+        super.render(delta)
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 

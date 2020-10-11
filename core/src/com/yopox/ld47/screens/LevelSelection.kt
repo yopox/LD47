@@ -37,6 +37,8 @@ class LevelSelection(game: LD47) : Screen(game) {
     }
 
     override fun render(delta: Float) {
+        super.render(delta)
+
         batch.use { batch ->
             batch.draw(background, 0f, 0f)
         }

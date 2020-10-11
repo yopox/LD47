@@ -42,11 +42,10 @@ class Title(game: LD47) : Screen(game) {
     }
 
     override fun render(delta: Float) {
+        super.render(delta)
+
         tick += 1
         autoPos += 6f + sin((autoPos + WIDTH / 2) / WIDTH * 2 * PI).toFloat() * 3f
-
-        Gdx.gl.glClearColor(0.25f, 0.2f, 0.3f, 1f)
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT)
 
         batch.use { batch ->
             batch.draw(background, 0f, 0f)

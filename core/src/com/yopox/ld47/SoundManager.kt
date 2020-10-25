@@ -1,5 +1,6 @@
 package com.yopox.ld47
 
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 
 object SoundManager {
@@ -19,7 +20,7 @@ object SoundManager {
     private val SFX_LEVEL = 0.5f
     private var mute = false
 
-    fun update() {
+    fun update(assetManager: AssetManager) {
         when (state) {
             State.BGM_OUT -> {
                 bgm?.let {
@@ -47,7 +48,7 @@ object SoundManager {
                     it.stop()
                     it.dispose()
                 }
-                bgm = LD47.assetManager.get(Assets.bgms[next_bgm], Music::class.java).also {
+                bgm = assetManager.get(Assets.bgms[next_bgm], Music::class.java).also {
                     it.play()
                     it.volume = 0f
                     it.isLooping = true
@@ -57,11 +58,11 @@ object SoundManager {
         }
     }
 
-    fun play(key: Resources) {
+    fun play(assetManager: AssetManager, key: Resources) {
         val path = Assets.bgms[key] ?: return
         when (state) {
             State.OFF -> {
-                bgm = LD47.assetManager.get(path, Music::class.java).also {
+                bgm = assetManager.get(path, Music::class.java).also {
                     it.play()
                     it.volume = if (mute) 0f else BGM_LEVEL
                     it.isLooping = true
@@ -77,13 +78,13 @@ object SoundManager {
         }
     }
 
-    fun sfx(key: Resources) {
+    fun sfx(assetManager: AssetManager, key: Resources) {
         val path = Assets.sfxs[key] ?: return
         sfx?.let {
             it.stop()
             it.dispose()
         }
-        sfx = LD47.assetManager.get(path, Music::class.java).also {
+        sfx = assetManager.get(path, Music::class.java).also {
             it.play()
             it.volume = if (mute) 0f else SFX_LEVEL
             it.isLooping = false

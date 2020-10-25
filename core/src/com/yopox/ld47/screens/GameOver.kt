@@ -28,9 +28,15 @@ class GameOver(game: LD47) : Screen(game) {
         buttons.add(MenuButton("TITLE", Vector2(WIDTH / 2, HEIGHT / 5)) { game.setScreen<Title>() })
     }
 
+    override val screenAssets
+        get() = arrayOf(
+                Levels.selected.gameOver,
+                Resources.OST_GAME_OVER
+        )
+
     override fun show() {
         super.show()
-        SoundManager.play(Resources.OST_GAME_OVER)
+        SoundManager.play(assetManager, Resources.OST_GAME_OVER)
         reset()
         score = InfiniteRace.scoreFormatter.format(InfiniteRace.score)
         val high = Levels.selected.high
@@ -38,7 +44,7 @@ class GameOver(game: LD47) : Screen(game) {
             newHigh = true
             Levels.selected.high = score
         }
-        gameOver = Assets.getTexture(Levels.selected.gameOver)
+        gameOver = getTexture(Levels.selected.gameOver)
     }
 
     override fun reset() {

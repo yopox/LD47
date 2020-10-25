@@ -1,8 +1,8 @@
 package com.yopox.ld47.screens
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
@@ -13,14 +13,16 @@ import kotlin.math.sin
 
 class Title(game: LD47) : Screen(game) {
 
-    val background = Assets.getTexture(Resources.TITLE_BG)
-    val title = Assets.getTexture(Resources.TITLE_TITLE)
-    val sub = Assets.getTexture(Resources.TITLE_SUB)
-    val cars = arrayOf(Assets.getTexture(Resources.TITLE_CAR1), Assets.getTexture(Resources.TITLE_CAR2), Assets.getTexture(Resources.TITLE_CAR3))
+    override val screenAssets
+        get() = arrayOf(
+                Resources.TITLE_BG,
+                Resources.TITLE_TITLE,
+                Resources.TITLE_SUB,
+                Resources.OST_TITLE,
+        ).plus(Resources.titleCars)
 
-    var auto = cars.random()
     var autoPos = -WIDTH / 2
-
+    var auto = Resources.titleCars.random()
     var tick = 0
 
     init {
@@ -31,10 +33,15 @@ class Title(game: LD47) : Screen(game) {
         )
     }
 
+    override fun reset() {
+        autoPos = -WIDTH / 2
+        tick = 0
+    }
+
     override fun show() {
         super.show()
         tick = 0
-        SoundManager.play(Resources.OST_TITLE)
+        SoundManager.play(assetManager, Resources.OST_TITLE)
     }
 
     override fun render(delta: Float) {
@@ -42,12 +49,16 @@ class Title(game: LD47) : Screen(game) {
 
         tick += 1
         autoPos += 6f + sin((autoPos + WIDTH / 2) / WIDTH * 2 * PI).toFloat() * 3f
+        val bg = getTexture(Resources.TITLE_BG)
+        val title = getTexture(Resources.TITLE_TITLE)
+        val sub = getTexture(Resources.TITLE_SUB)
+        val autoTexture = getTexture(auto)
 
         batch.use { batch ->
-            batch.draw(background, 0f, 0f)
+            batch.draw(bg, 0f, 0f)
             batch.draw(title, WIDTH / 2 - title.width / 2, HEIGHT - 210f + sin(tick / 60f) * 15f)
             batch.draw(sub, WIDTH / 2 - sub.width / 2, HEIGHT - 475f + sin(tick / 60f) * 15f)
-            batch.draw(auto, autoPos, 100f - auto.height / 2)
+            batch.draw(autoTexture, autoPos, 100f - autoTexture.height / 2)
 
             buttons.forEach { button -> button.draw(batch) }
         }
@@ -57,12 +68,10 @@ class Title(game: LD47) : Screen(game) {
         }
 
         if (autoPos >= 3 * WIDTH / 2) {
-            auto = cars.random()
+            auto = Resources.titleCars.random()
             autoPos = -WIDTH
         }
     }
-
-    override fun reset() {}
 
     override fun keyTyped(character: Char): Boolean {
         when (character) {

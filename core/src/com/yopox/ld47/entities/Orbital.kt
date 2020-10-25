@@ -1,5 +1,6 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Vector2
@@ -10,7 +11,7 @@ import com.yopox.ld47.Resources
 import com.yopox.ld47.screens.Screen
 import kotlin.math.*
 
-open class Orbital(textureID: Resources) : Sprite(Assets.getTexture(textureID)) {
+open class Orbital(texture: Texture) : Sprite(texture) {
     internal var angle = PI / 4
     internal var radius = CENTER
     internal var leftOrbit = true

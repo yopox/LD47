@@ -1,5 +1,6 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector2
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
@@ -8,7 +9,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Boss(var lives: Int = 3) : Orbital(Resources.CAR_BOSS) {
+class Boss(texture: Texture, var lives: Int = 3) : Orbital(texture) {
 
     var willCross = false
     var justUpdated = false

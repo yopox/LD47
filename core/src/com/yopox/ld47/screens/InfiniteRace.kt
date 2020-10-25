@@ -33,12 +33,25 @@ class InfiniteRace(game: LD47) : Screen(game) {
             else -> true
         }
 
-    private var player = Player()
+    override val screenAssets
+        get() = arrayOf(
+                Levels.selected.background,
+                Levels.selected.car,
+                Levels.selected.enemy,
+                Resources.CAR_BOSS,
+
+                Resources.GUI_BG,
+                Resources.GUI_BG2,
+
+                Resources.OST_LEVEL,
+                Resources.OST_LEVEL_ALT,
+                Resources.OST_BOSS,
+                Resources.OST_BOSS_ALT,
+        ).plus(Resources.bonuses)
+
+    private lateinit var player: Player
     private var enemies = arrayListOf<Orbital>()
     private var bonuses = arrayListOf<Bonus>()
-    private var background = Assets.getTexture(Levels.levels[LevelSelection.selected].background)
-    private val gui_bg = Assets.getTexture(Resources.GUI_BG)
-    private val gui_bg2 = Assets.getTexture(Resources.GUI_BG2)
     private var state = State.COUNT
     private var internalFrame = 0
     private var sequencerState = SequencerState.NORMAL
@@ -59,10 +72,9 @@ class InfiniteRace(game: LD47) : Screen(game) {
     override fun reset() {
         state = State.COUNT
         myScore = BigDecimal.ZERO
-        player = Player()
+        player = Player(getTexture(Levels.selected.car))
         enemies.clear()
         bonuses.clear()
-        background = Assets.getTexture(Levels.selected.background)
         internalFrame = 0
         blockInput = false
         SoundManager.stop()
@@ -77,7 +89,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 val dx = 0
                 buttons.add(PadButton("<-", Vector2(PadButton.SIZE - dx, PadButton.SIZE), { player.facing = LEFT }, { player.facing = FRONT }))
                 buttons.add(PadButton("->", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE), { player.facing = RIGHT }, { player.facing = FRONT }))
-                buttons.add(PadButton("NITRO", Vector2(PadButton.SIZE - dx, PadButton.SIZE * 2.5f), {}, { player.nitro() }))
+                buttons.add(PadButton("NITRO", Vector2(PadButton.SIZE - dx, PadButton.SIZE * 2.5f), {}, { player.nitro(assetManager) }))
                 buttons.add(PadButton("BRAKE", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE * 2.5f), {}, { player.brake() }))
             }
             initButtons = true
@@ -97,10 +109,10 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 drawGame()
                 internalFrame += 1
                 when (internalFrame) {
-                    16 -> SoundManager.sfx(Resources.SFX_321)
+                    16 -> SoundManager.sfx(assetManager, Resources.SFX_321)
                     170 -> {
                         state = State.INFINITE
-                        SoundManager.play(Resources.OST_LEVEL)
+                        SoundManager.play(assetManager, Resources.OST_LEVEL)
                         internalFrame = 0
                     }
                 }
@@ -131,7 +143,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             internalFrame = 0
             blockInput = true
             SoundManager.stop()
-            SoundManager.sfx(Resources.SFX_GAME_OVER)
+            SoundManager.sfx(assetManager, Resources.SFX_GAME_OVER)
         }
     }
 
@@ -140,11 +152,13 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
         if (internalFrame % Levels.selected.tick == 0) {
             // Spawn a bonus
-            if (LD47.random.nextFloat() <= BONUS_PROBABILITY && bonuses.size < 2) bonuses.add(Bonus())
+            if (LD47.random.nextFloat() <= BONUS_PROBABILITY && bonuses.size < 2) {
+                val bonus = Resources.bonuses.random()
+                bonuses.add(Bonus(getTexture(bonus), bonus))
+            }
 
             // Spawn a crosser
-            if (LD47.random.nextFloat() <= CROSSER_PROBABILITY) enemies.add(Crosser())
-
+            if (LD47.random.nextFloat() <= CROSSER_PROBABILITY) enemies.add(Crosser(getTexture(Levels.selected.enemy)))
         }
 
         if (internalFrame >= 1800 && !sequencerState.isBoss) {
@@ -154,24 +168,24 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 sequencerState = SequencerState.BOSS
             }
             internalFrame = 0
-            enemies.add(Boss(if (sequencerState == SequencerState.BOSS_ALT) 5 else 3))
+            enemies.add(Boss(getTexture(Resources.CAR_BOSS), if (sequencerState == SequencerState.BOSS_ALT) 5 else 3))
             SoundManager.stop()
-            SoundManager.sfx(Resources.SFX_BOSS)
+            SoundManager.sfx(assetManager, Resources.SFX_BOSS)
         }
 
         if (internalFrame > 100 && sequencerState.isBoss && enemies.none { it is Boss }) {
             if (LD47.random.nextFloat() <= ALT_PROBABILITY) {
                 sequencerState = SequencerState.NORMAL_ALT
-                SoundManager.play(Resources.OST_LEVEL_ALT)
+                SoundManager.play(assetManager, Resources.OST_LEVEL_ALT)
             } else {
                 sequencerState = SequencerState.NORMAL
-                SoundManager.play(Resources.OST_LEVEL)
+                SoundManager.play(assetManager, Resources.OST_LEVEL)
             }
             internalFrame = 0
         }
 
         if (sequencerState.isBoss && internalFrame == 100) {
-            SoundManager.play(if (sequencerState == SequencerState.BOSS) Resources.OST_BOSS else Resources.OST_BOSS_ALT)
+            SoundManager.play(assetManager, if (sequencerState == SequencerState.BOSS) Resources.OST_BOSS else Resources.OST_BOSS_ALT)
         }
 
     }
@@ -179,7 +193,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
     private fun drawGame() {
         batch.use { batch ->
             // Background
-            batch.draw(background, 0f, 0f)
+            batch.draw(getTexture(Levels.levels[LevelSelection.selected].background), 0f, 0f)
 
             // Sprites
             bonuses.forEach { it.draw(batch) }
@@ -191,6 +205,9 @@ class InfiniteRace(game: LD47) : Screen(game) {
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled) { renderer ->
             buttons.forEach { button -> button.drawBackground(renderer) }
         }
+
+        val gui_bg = getTexture(Resources.GUI_BG)
+        val gui_bg2 = getTexture(Resources.GUI_BG2)
 
         batch.use { batch ->
 
@@ -220,7 +237,10 @@ class InfiniteRace(game: LD47) : Screen(game) {
         enemies.forEach {
             it.update()
             val collision = player.collidesWith(it)
-            if (collision != Orbital.Companion.Collision.NONE) player.hit(collision, it)
+            if (collision != Orbital.Companion.Collision.NONE) {
+                player.hit(collision, it)
+                SoundManager.sfx(assetManager, Resources.SFX_HIT)
+            }
 
             if (!it.hit) {
                 for (enemy in enemies) {
@@ -229,6 +249,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                         if (collision != Orbital.Companion.Collision.NONE) {
                             it.hit(collision)
                             enemy.hit(collision)
+                            SoundManager.sfx(assetManager, Resources.SFX_HIT)
                         }
                     }
                 }
@@ -242,13 +263,16 @@ class InfiniteRace(game: LD47) : Screen(game) {
         bonuses.forEach {
             it.update()
             val collision = player.collidesWith(it)
-            if (collision != Orbital.Companion.Collision.NONE) player.collect(it)
+            if (collision != Orbital.Companion.Collision.NONE) {
+                SoundManager.sfx(assetManager, Resources.SFX_SELECT)
+                player.collect(it)
+            }
         }
         bonuses.filter { it.toDestroy }.forEach { bonuses.remove(it) }
     }
 
     private fun bossDefeated() {
-        SoundManager.play(Resources.OST_LEVEL_ALT)
+        SoundManager.play(assetManager, Resources.OST_LEVEL_ALT)
     }
 
     override fun keyDown(keycode: Int): Boolean {
@@ -274,16 +298,16 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 when (state) {
                     State.INFINITE -> {
                         state = State.PAUSE
-                        SoundManager.sfx(Resources.SFX_PAUSE)
+                        SoundManager.sfx(assetManager, Resources.SFX_PAUSE)
                     }
                     State.PAUSE -> {
                         state = State.INFINITE
-                        SoundManager.sfx(Resources.SFX_UNPAUSE)
+                        SoundManager.sfx(assetManager, Resources.SFX_UNPAUSE)
                     }
                     else -> Unit
                 }
             }
-            ' ', '\uF700' -> player.nitro()
+            ' ', '\uF700' -> player.nitro(assetManager)
             'x', '\uF701' -> player.brake()
         }
         return true

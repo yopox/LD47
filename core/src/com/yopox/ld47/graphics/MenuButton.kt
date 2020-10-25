@@ -10,6 +10,5 @@ class MenuButton(text: String, pos: Vector2, private val callback: () -> Unit) :
 
     override fun release() {
         callback()
-        SoundManager.sfx(Resources.SFX_BUTTON)
     }
 }

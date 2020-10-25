@@ -1,10 +1,11 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import kotlin.math.PI
 
-class Bonus(val type: Resources = kinds.random()): Orbital(type) {
+class Bonus(texture: Texture, val type: Resources): Orbital(texture) {
 
     var tick = 0
 

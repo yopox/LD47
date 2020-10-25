@@ -1,5 +1,7 @@
 package com.yopox.ld47
 
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 
 enum class Resources {
@@ -41,9 +43,41 @@ enum class Resources {
     TITLE_SUB,
     TITLE_CAR1,
     TITLE_CAR2,
-    TITLE_CAR3
+    TITLE_CAR3,
+    ;
+
+    companion object {
+        val cars: Array<Resources>
+            get() = arrayOf(
+                    CAR1,
+                    CAR2,
+                    CAR3,
+                    CAR4,
+                    CAR5,
+                    CAR6,
+            )
+        val titleCars: Array<Resources>
+            get() = arrayOf(
+                    TITLE_CAR1,
+                    TITLE_CAR2,
+                    TITLE_CAR3,
+            )
+        val bonuses: Array<Resources>
+            get() = arrayOf(
+                    BONUS_BOOST,
+                    BONUS_NITRO,
+                    MALUS,
+            )
+        val circuits: Array<Resources>
+            get() = arrayOf(
+                    BACKGROUND1,
+                    BACKGROUND2,
+                    BACKGROUND3,
+            )
+    }
 
 }
+
 
 object Assets {
 
@@ -71,7 +105,7 @@ object Assets {
             Resources.TITLE_SUB to "titlescreen/subtitle.png",
             Resources.TITLE_CAR1 to "titlescreen/cartitle1.png",
             Resources.TITLE_CAR2 to "titlescreen/cartitle2.png",
-            Resources.TITLE_CAR3 to "titlescreen/cartitle3.png"
+            Resources.TITLE_CAR3 to "titlescreen/cartitle3.png",
     )
 
     val bgms = mapOf(
@@ -80,7 +114,7 @@ object Assets {
             Resources.OST_LEVEL to "ost/1.ogg",
             Resources.OST_LEVEL_ALT to "ost/2.ogg",
             Resources.OST_BOSS to "ost/3.ogg",
-            Resources.OST_BOSS_ALT to "ost/4.ogg"
+            Resources.OST_BOSS_ALT to "ost/4.ogg",
     )
 
     val sfxs = mapOf(
@@ -92,9 +126,14 @@ object Assets {
             Resources.SFX_GAME_OVER to "sfx/mort.ogg",
             Resources.SFX_NITRO to "sfx/nitro.ogg",
             Resources.SFX_PAUSE to "sfx/pause.ogg",
-            Resources.SFX_UNPAUSE to "sfx/unpause.ogg"
+            Resources.SFX_UNPAUSE to "sfx/unpause.ogg",
     )
 
-    fun getTexture(resource: Resources): Texture = LD47.assetManager.get(sprites[resource], Texture::class.java)
+    fun load(assetManager: AssetManager, asset: Resources) = when (asset) {
+        in sprites.keys -> assetManager.load(sprites[asset], Texture::class.java)
+        in bgms.keys -> assetManager.load(bgms[asset], Music::class.java)
+        in sfxs.keys -> assetManager.load(sfxs[asset], Music::class.java)
+        else -> throw Exception("Unknown resource: $asset")
+    }
 
 }

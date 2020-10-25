@@ -1,5 +1,6 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Levels
 import com.yopox.ld47.screens.Screen
@@ -8,7 +9,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Crosser: Orbital(Levels.selected.enemy) {
+class Crosser(texture: Texture): Orbital(texture) {
 
     init {
         angle = LD47.random.nextFloat() * 2 * PI

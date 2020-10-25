@@ -2,22 +2,30 @@ package com.yopox.ld47.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.GL30
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.yopox.ld47.Assets
 import com.yopox.ld47.LD47
+import com.yopox.ld47.Resources
 import com.yopox.ld47.graphics.Button
 import ktx.app.KtxScreen
 import ktx.math.component1
 import ktx.math.component2
 
 abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
+
+    val assetManager = AssetManager()
+    abstract val screenAssets: Array<Resources>
 
     internal val batch = SpriteBatch()
     internal val shapeRenderer = ShapeRenderer()
@@ -38,12 +46,26 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
         }
     }
 
+    fun getTexture(resource: Resources): Texture = assetManager.get(Assets.sprites[resource], Texture::class.java)
+
     override fun show() {
         super.show()
         Gdx.input.inputProcessor = this
+
+        // Always load all SFXs
+        Assets.sfxs.keys.forEach { key ->
+            assetManager.load(Assets.sfxs[key], Music::class.java)
+        }
+
+        for (asset in screenAssets) {
+            Assets.load(assetManager, asset)
+        }
+        assetManager.finishLoading()
+        reset()
     }
 
     override fun dispose() {
+        assetManager.clear()
         batch.dispose()
         shapeRenderer.dispose()
     }

@@ -1,12 +1,14 @@
 package com.yopox.ld47.entities
 
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
 import kotlin.math.max
 import kotlin.math.min
 
-class Player : Orbital(Levels.selected.car) {
+class Player(texture: Texture) : Orbital(texture) {
 
     var nitroCounter = 0f
 
@@ -61,14 +63,13 @@ class Player : Orbital(Levels.selected.car) {
         val speedLoss = speed / 2
         speed -= speedLoss
         acceleration += max(Levels.selected.minSpeed - speed, 0f)
-        SoundManager.sfx(Resources.SFX_HIT)
     }
 
-    fun nitro() {
+    fun nitro(assetManager: AssetManager) {
         if (acceleration < ACCELERATION_STEP && nitro >= NITRO_COST) {
             nitro -= NITRO_COST
             acceleration = 1f
-            SoundManager.sfx(Resources.SFX_NITRO)
+            SoundManager.sfx(assetManager, Resources.SFX_NITRO)
         }
     }
 
@@ -80,7 +81,6 @@ class Player : Orbital(Levels.selected.car) {
     }
 
     fun collect(bonus: Bonus) {
-        SoundManager.sfx(Resources.SFX_SELECT)
         when (bonus.type) {
             Resources.MALUS -> acceleration -= 0.5f
             Resources.BONUS_NITRO -> nitro = min(NITRO_MAX, nitro + NITRO_REFILL)

@@ -42,11 +42,6 @@ class InfiniteRace(game: LD47) : Screen(game) {
 
                 Resources.GUI_BG,
                 Resources.GUI_BG2,
-
-                Resources.OST_LEVEL,
-                Resources.OST_LEVEL_ALT,
-                Resources.OST_BOSS,
-                Resources.OST_BOSS_ALT,
         ).plus(Resources.bonuses)
 
     private lateinit var player: Player
@@ -89,7 +84,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 val dx = 0
                 buttons.add(PadButton("<-", Vector2(PadButton.SIZE - dx, PadButton.SIZE), { player.facing = LEFT }, { player.facing = FRONT }))
                 buttons.add(PadButton("->", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE), { player.facing = RIGHT }, { player.facing = FRONT }))
-                buttons.add(PadButton("NITRO", Vector2(PadButton.SIZE - dx, PadButton.SIZE * 2.5f), {}, { player.nitro(assetManager) }))
+                buttons.add(PadButton("NITRO", Vector2(PadButton.SIZE - dx, PadButton.SIZE * 2.5f), {}, { player.nitro() }))
                 buttons.add(PadButton("BRAKE", Vector2(WIDTH - PadButton.SIZE + dx, PadButton.SIZE * 2.5f), {}, { player.brake() }))
             }
             initButtons = true
@@ -109,10 +104,10 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 drawGame()
                 internalFrame += 1
                 when (internalFrame) {
-                    16 -> SoundManager.sfx(assetManager, Resources.SFX_321)
+                    16 -> SoundManager.sfx(SFX.START)
                     170 -> {
                         state = State.INFINITE
-                        SoundManager.play(assetManager, Resources.OST_LEVEL)
+                        SoundManager.play(BGM.LEVEL)
                         internalFrame = 0
                     }
                 }
@@ -143,7 +138,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             internalFrame = 0
             blockInput = true
             SoundManager.stop()
-            SoundManager.sfx(assetManager, Resources.SFX_GAME_OVER)
+            SoundManager.sfx(SFX.GAME_OVER)
         }
     }
 
@@ -170,22 +165,22 @@ class InfiniteRace(game: LD47) : Screen(game) {
             internalFrame = 0
             enemies.add(Boss(getTexture(Resources.CAR_BOSS), if (sequencerState == SequencerState.BOSS_ALT) 5 else 3))
             SoundManager.stop()
-            SoundManager.sfx(assetManager, Resources.SFX_BOSS)
+            SoundManager.sfx(SFX.BOSS)
         }
 
         if (internalFrame > 100 && sequencerState.isBoss && enemies.none { it is Boss }) {
             if (LD47.random.nextFloat() <= ALT_PROBABILITY) {
                 sequencerState = SequencerState.NORMAL_ALT
-                SoundManager.play(assetManager, Resources.OST_LEVEL_ALT)
+                SoundManager.play(BGM.LEVEL_ALT)
             } else {
                 sequencerState = SequencerState.NORMAL
-                SoundManager.play(assetManager, Resources.OST_LEVEL)
+                SoundManager.play(BGM.LEVEL)
             }
             internalFrame = 0
         }
 
         if (sequencerState.isBoss && internalFrame == 100) {
-            SoundManager.play(assetManager, if (sequencerState == SequencerState.BOSS) Resources.OST_BOSS else Resources.OST_BOSS_ALT)
+            SoundManager.play(if (sequencerState == SequencerState.BOSS) BGM.BOSS else BGM.BOSS_ALT)
         }
 
     }
@@ -239,7 +234,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             val collision = player.collidesWith(it)
             if (collision != Orbital.Companion.Collision.NONE) {
                 player.hit(collision, it)
-                SoundManager.sfx(assetManager, Resources.SFX_HIT)
+                SoundManager.sfx(SFX.HIT)
             }
 
             if (!it.hit) {
@@ -249,7 +244,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
                         if (collision != Orbital.Companion.Collision.NONE) {
                             it.hit(collision)
                             enemy.hit(collision)
-                            SoundManager.sfx(assetManager, Resources.SFX_HIT)
+                            SoundManager.sfx(SFX.HIT)
                         }
                     }
                 }
@@ -264,7 +259,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
             it.update()
             val collision = player.collidesWith(it)
             if (collision != Orbital.Companion.Collision.NONE) {
-                SoundManager.sfx(assetManager, Resources.SFX_SELECT)
+                SoundManager.sfx(SFX.SELECT)
                 player.collect(it)
             }
         }
@@ -272,7 +267,7 @@ class InfiniteRace(game: LD47) : Screen(game) {
     }
 
     private fun bossDefeated() {
-        SoundManager.play(assetManager, Resources.OST_LEVEL_ALT)
+        SoundManager.play(BGM.LEVEL_ALT)
     }
 
     override fun keyDown(keycode: Int): Boolean {
@@ -298,16 +293,16 @@ class InfiniteRace(game: LD47) : Screen(game) {
                 when (state) {
                     State.INFINITE -> {
                         state = State.PAUSE
-                        SoundManager.sfx(assetManager, Resources.SFX_PAUSE)
+                        SoundManager.sfx(SFX.PAUSE)
                     }
                     State.PAUSE -> {
                         state = State.INFINITE
-                        SoundManager.sfx(assetManager, Resources.SFX_UNPAUSE)
+                        SoundManager.sfx(SFX.UNPAUSE)
                     }
                     else -> Unit
                 }
             }
-            ' ', '\uF700' -> player.nitro(assetManager)
+            ' ', '\uF700' -> player.nitro()
             'x', '\uF701' -> player.brake()
         }
         return true

@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
 import com.yopox.ld47.Levels
 import com.yopox.ld47.Resources
+import com.yopox.ld47.SFX
 import com.yopox.ld47.SoundManager
 import kotlin.math.max
 import kotlin.math.min
@@ -65,11 +66,11 @@ class Player(texture: Texture) : Orbital(texture) {
         acceleration += max(Levels.selected.minSpeed - speed, 0f)
     }
 
-    fun nitro(assetManager: AssetManager) {
+    fun nitro() {
         if (acceleration < ACCELERATION_STEP && nitro >= NITRO_COST) {
             nitro -= NITRO_COST
             acceleration = 1f
-            SoundManager.sfx(assetManager, Resources.SFX_NITRO)
+            SoundManager.sfx(SFX.NITRO)
         }
     }
 

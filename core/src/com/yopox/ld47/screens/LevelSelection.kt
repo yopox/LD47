@@ -3,10 +3,7 @@ package com.yopox.ld47.screens
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
-import com.yopox.ld47.LD47
-import com.yopox.ld47.Levels
-import com.yopox.ld47.Resources
-import com.yopox.ld47.SoundManager
+import com.yopox.ld47.*
 import com.yopox.ld47.graphics.Fonts
 import com.yopox.ld47.graphics.MenuButton
 import ktx.graphics.use
@@ -19,7 +16,7 @@ class LevelSelection(game: LD47) : Screen(game) {
     }
 
     override val screenAssets
-        get() = arrayOf(Resources.OST_GAME_OVER).plus(Resources.cars).plus(Resources.circuits)
+        get() = Resources.cars.plus(Resources.circuits)
 
     init {
         buttons.add(MenuButton("NEXT", Vector2(WIDTH - 256f, HEIGHT - 64f * 6 + 20f)) { next() })
@@ -31,7 +28,7 @@ class LevelSelection(game: LD47) : Screen(game) {
 
     override fun show() {
         super.show()
-        SoundManager.play(assetManager, Resources.OST_GAME_OVER)
+        SoundManager.play(BGM.GAME_OVER)
     }
 
     override fun render(delta: Float) {
@@ -65,11 +62,11 @@ class LevelSelection(game: LD47) : Screen(game) {
     override fun keyTyped(character: Char): Boolean {
         when (character) {
             '\uF702' -> {
-                SoundManager.sfx(assetManager, Resources.SFX_BUTTON)
+                SoundManager.sfx(SFX.BUTTON)
                 previous()
             }
             '\uF703' -> {
-                SoundManager.sfx(assetManager, Resources.SFX_BUTTON)
+                SoundManager.sfx(SFX.BUTTON)
                 next()
             }
             ' ' -> game.setScreen<InfiniteRace>()

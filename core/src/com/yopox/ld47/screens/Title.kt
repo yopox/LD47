@@ -1,8 +1,8 @@
 package com.yopox.ld47.screens
 
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
+import com.yopox.ld47.BGM
 import com.yopox.ld47.LD47
 import com.yopox.ld47.Resources
 import com.yopox.ld47.SoundManager
@@ -18,7 +18,6 @@ class Title(game: LD47) : Screen(game) {
                 Resources.TITLE_BG,
                 Resources.TITLE_TITLE,
                 Resources.TITLE_SUB,
-                Resources.OST_TITLE,
         ).plus(Resources.titleCars)
 
     var autoPos = -WIDTH / 2
@@ -41,7 +40,7 @@ class Title(game: LD47) : Screen(game) {
     override fun show() {
         super.show()
         tick = 0
-        SoundManager.play(assetManager, Resources.OST_TITLE)
+        SoundManager.play(BGM.TITLE)
     }
 
     override fun render(delta: Float) {

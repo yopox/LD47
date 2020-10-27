@@ -1,26 +1,26 @@
 package com.yopox.ld47
 
-import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 
 object SoundManager {
 
     enum class State {
-        OFF, BGM, BGM_OUT, BGM_IN, NEXT_BGM
+        OFF, PLAYING, BGM_OUT, BGM_IN, NEXT_BGM
     }
 
     private var bgm: Music? = null
     private var sfx: Music? = null
 
     private var state = State.OFF
-    private var next_bgm: Resources? = null
+    private var next_bgm: BGM? = null
 
     private val BGM_LEVEL = 0.5f
     private var currentBgmLevel = BGM_LEVEL
     private val SFX_LEVEL = 0.5f
     private var mute = false
 
-    fun update(assetManager: AssetManager) {
+    fun update() {
         when (state) {
             State.BGM_OUT -> {
                 bgm?.let {
@@ -39,7 +39,7 @@ object SoundManager {
                     currentBgmLevel += 0.05f
                     it.volume = if (mute) 0f else currentBgmLevel
                     if (currentBgmLevel > BGM_LEVEL) {
-                        state = State.BGM
+                        state = State.PLAYING
                     }
                 }
             }
@@ -48,7 +48,7 @@ object SoundManager {
                     it.stop()
                     it.dispose()
                 }
-                bgm = assetManager.get(Assets.bgms[next_bgm], Music::class.java).also {
+                bgm = Gdx.audio.newMusic(Gdx.files.internal(Assets.bgms[next_bgm])).also {
                     it.play()
                     it.volume = 0f
                     it.isLooping = true
@@ -58,17 +58,17 @@ object SoundManager {
         }
     }
 
-    fun play(assetManager: AssetManager, key: Resources) {
+    fun play(key: BGM) {
         val path = Assets.bgms[key] ?: return
         when (state) {
             State.OFF -> {
-                bgm = assetManager.get(path, Music::class.java).also {
+                bgm = Gdx.audio.newMusic(Gdx.files.internal(path)).also {
                     it.play()
                     it.volume = if (mute) 0f else BGM_LEVEL
                     it.isLooping = true
                 }
                 currentBgmLevel = BGM_LEVEL
-                state = State.BGM
+                state = State.PLAYING
             }
             else -> {
                 next_bgm = key
@@ -78,13 +78,13 @@ object SoundManager {
         }
     }
 
-    fun sfx(assetManager: AssetManager, key: Resources) {
+    fun sfx(key: SFX) {
         val path = Assets.sfxs[key] ?: return
         sfx?.let {
             it.stop()
             it.dispose()
         }
-        sfx = assetManager.get(path, Music::class.java).also {
+        sfx = Gdx.audio.newMusic(Gdx.files.internal(path)).also {
             it.play()
             it.volume = if (mute) 0f else SFX_LEVEL
             it.isLooping = false

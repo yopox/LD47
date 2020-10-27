@@ -5,21 +5,6 @@ import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
 
 enum class Resources {
-    OST_TITLE,
-    OST_GAME_OVER,
-    OST_LEVEL_ALT,
-    OST_LEVEL,
-    OST_BOSS,
-    OST_BOSS_ALT,
-    SFX_BOSS,
-    SFX_BUTTON,
-    SFX_HIT,
-    SFX_SELECT,
-    SFX_321,
-    SFX_GAME_OVER,
-    SFX_NITRO,
-    SFX_PAUSE,
-    SFX_UNPAUSE,
     CAR1,
     CAR2,
     CAR3,
@@ -78,6 +63,27 @@ enum class Resources {
 
 }
 
+enum class BGM {
+    TITLE,
+    GAME_OVER,
+    LEVEL_ALT,
+    LEVEL,
+    BOSS,
+    BOSS_ALT,
+}
+
+enum class SFX {
+    BOSS,
+    BUTTON,
+    HIT,
+    SELECT,
+    START,
+    GAME_OVER,
+    NITRO,
+    PAUSE,
+    UNPAUSE,
+}
+
 
 object Assets {
 
@@ -109,30 +115,28 @@ object Assets {
     )
 
     val bgms = mapOf(
-            Resources.OST_TITLE to "ost/0.ogg",
-            Resources.OST_GAME_OVER to "ost/5.ogg",
-            Resources.OST_LEVEL to "ost/1.ogg",
-            Resources.OST_LEVEL_ALT to "ost/2.ogg",
-            Resources.OST_BOSS to "ost/3.ogg",
-            Resources.OST_BOSS_ALT to "ost/4.ogg",
+            BGM.TITLE to "ost/0.ogg",
+            BGM.GAME_OVER to "ost/5.ogg",
+            BGM.LEVEL to "ost/1.ogg",
+            BGM.LEVEL_ALT to "ost/2.ogg",
+            BGM.BOSS to "ost/3.ogg",
+            BGM.BOSS_ALT to "ost/4.ogg",
     )
 
     val sfxs = mapOf(
-            Resources.SFX_BOSS to "sfx/boss_alert.ogg",
-            Resources.SFX_BUTTON to "sfx/button.ogg",
-            Resources.SFX_HIT to "sfx/collision.ogg",
-            Resources.SFX_SELECT to "sfx/confirm.ogg",
-            Resources.SFX_321 to "sfx/go.ogg",
-            Resources.SFX_GAME_OVER to "sfx/mort.ogg",
-            Resources.SFX_NITRO to "sfx/nitro.ogg",
-            Resources.SFX_PAUSE to "sfx/pause.ogg",
-            Resources.SFX_UNPAUSE to "sfx/unpause.ogg",
+            SFX.BOSS to "sfx/boss_alert.ogg",
+            SFX.BUTTON to "sfx/button.ogg",
+            SFX.HIT to "sfx/collision.ogg",
+            SFX.SELECT to "sfx/confirm.ogg",
+            SFX.START to "sfx/go.ogg",
+            SFX.GAME_OVER to "sfx/mort.ogg",
+            SFX.NITRO to "sfx/nitro.ogg",
+            SFX.PAUSE to "sfx/pause.ogg",
+            SFX.UNPAUSE to "sfx/unpause.ogg",
     )
 
     fun load(assetManager: AssetManager, asset: Resources) = when (asset) {
         in sprites.keys -> assetManager.load(sprites[asset], Texture::class.java)
-        in bgms.keys -> assetManager.load(bgms[asset], Music::class.java)
-        in sfxs.keys -> assetManager.load(sfxs[asset], Music::class.java)
         else -> throw Exception("Unknown resource: $asset")
     }
 

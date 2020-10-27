@@ -29,7 +29,7 @@ class LD47 : KtxGame<Screen>() {
 
     override fun render() {
         super.render()
-        SoundManager.update((currentScreen as com.yopox.ld47.screens.Screen).assetManager)
+        SoundManager.update()
     }
 
     override fun <Type : Screen> setScreen(type: Class<Type>) {

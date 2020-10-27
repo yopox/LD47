@@ -52,11 +52,6 @@ abstract class Screen(internal val game: LD47) : InputProcessor, KtxScreen {
         super.show()
         Gdx.input.inputProcessor = this
 
-        // Always load all SFXs
-        Assets.sfxs.keys.forEach { key ->
-            assetManager.load(Assets.sfxs[key], Music::class.java)
-        }
-
         for (asset in screenAssets) {
             Assets.load(assetManager, asset)
         }

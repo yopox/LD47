@@ -31,12 +31,11 @@ class GameOver(game: LD47) : Screen(game) {
     override val screenAssets
         get() = arrayOf(
                 Levels.selected.gameOver,
-                Resources.OST_GAME_OVER
         )
 
     override fun show() {
         super.show()
-        SoundManager.play(assetManager, Resources.OST_GAME_OVER)
+        SoundManager.play(BGM.GAME_OVER)
         reset()
         score = InfiniteRace.scoreFormatter.format(InfiniteRace.score)
         val high = Levels.selected.high
